@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  baserow:
+    image: baserow/baserow:latest
+    container_name: ${CONTAINER_NAME:-baserow}
+    restart: unless-stopped
+    environment:
+      - BASEROW_PUBLIC_URL=${PUBLIC_URL:-http://localhost}
+      - DATABASE_HOST=db
+      - DATABASE_NAME=${DB_NAME:-baserow}
+      - DATABASE_USER=${DB_USER:-baserow}
+      - DATABASE_PASSWORD=${DB_PASSWORD:-baserow}
+      - REDIS_HOST=redis
+      - SECRET_KEY=${SECRET_KEY:-change-this-to-a-random-string}
+      - EMAIL_SMTP=${SMTP_ENABLED:-false}
+      - EMAIL_SMTP_HOST=${SMTP_HOST}
+      - EMAIL_SMTP_PORT=${SMTP_PORT:-587}
+      - EMAIL_SMTP_USER=${SMTP_USER}
+      - EMAIL_SMTP_PASSWORD=${SMTP_PASSWORD}
+      - EMAIL_SMTP_USE_TLS=${SMTP_TLS:-true}
+      - BASEROW_JWT_SIGNING_KEY=${JWT_KEY:-change-this-to-a-random-string}
+      - BASEROW_WEBHOOKS_ALLOW_PRIVATE_ADDRESS=${ALLOW_PRIVATE_ADDRESS:-false}
+      - BASEROW_BACKEND_BIND_ADDRESS=0.0.0.0
+      - BASEROW_WEBFRONTEND_BIND_ADDRESS=0.0.0.0
+      - TZ=${TIMEZONE:-Asia/Shanghai}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    volumes:
+      - ./data/baserow:/baserow/data
+    networks:
+      - baserow-network
+
+  db:
+    image: postgres:15-alpine
+    container_name: ${CONTAINER_NAME:-baserow}-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${DB_USER:-baserow}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-baserow}
+      - POSTGRES_DB=${DB_NAME:-baserow}
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    networks:
+      - baserow-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-baserow}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: ${CONTAINER_NAME:-baserow}-redis
+    restart: unless-stopped
+    networks:
+      - baserow-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  baserow-network:
+    driver: bridge

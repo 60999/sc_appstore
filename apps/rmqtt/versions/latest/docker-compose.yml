@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  rmqtt:
+    image: rmqtt/rmqtt:latest
+    container_name: ${CONTAINER_NAME:-rmqtt}
+    restart: unless-stopped
+    ports:
+      - "${MQTT_PORT:-1883}:1883"
+      - "${MQTTS_PORT:-8883}:8883"
+      - "${HTTP_PORT:-6060}:6060"
+      - "${GRPC_PORT:-5363}:5363"
+      - "${RAFT_PORT:-6003}:6003"
+    volumes:
+      - ./data/log:/var/log/rmqtt
+      - ./data/config:/etc/rmqtt
+    environment:
+      - TZ=${TIMEZONE:-Asia/Shanghai}
+    command: >
+      --id ${NODE_ID:-1}
+      --listen-addrs "0.0.0.0:1883"
+      --listen-addrs "0.0.0.0:8883"
+      --http-listen-addr "0.0.0.0:6060"
+      --grpc-listen-addr "0.0.0.0:5363"
+      --raft-listen-addr "0.0.0.0:6003"
+      ${PLUGINS_DEFAULT_STARTUPS:+--plugins-default-startups ${PLUGINS_DEFAULT_STARTUPS}}
+      ${NODE_GRPC_ADDRS:+--node-grpc-addrs ${NODE_GRPC_ADDRS}}
+      ${RAFT_PEER_ADDRS:+--raft-peer-addrs ${RAFT_PEER_ADDRS}}
+    networks:
+      - rmqtt-network
+
+networks:
+  rmqtt-network:
+    driver: bridge

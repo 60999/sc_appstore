@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: ${CONTAINER_NAME:-vikunja}-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${DB_USER:-vikunja}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-vikunja}
+      - POSTGRES_DB=${DB_NAME:-vikunja}
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    networks:
+      - vikunja-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-vikunja}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    image: vikunja/api:latest
+    container_name: ${CONTAINER_NAME:-vikunja}-api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - VIKUNJA_DATABASE_HOST=db
+      - VIKUNJA_DATABASE_PASSWORD=${DB_PASSWORD:-vikunja}
+      - VIKUNJA_DATABASE_USER=${DB_USER:-vikunja}
+      - VIKUNJA_DATABASE_DATABASE=${DB_NAME:-vikunja}
+      - VIKUNJA_DATABASE_TYPE=postgres
+      - VIKUNJA_SERVICE_JWTSECRET=${JWT_SECRET:-your-secret-key-change-this}
+      - VIKUNJA_SERVICE_FRONTENDURL=${FRONTEND_URL:-http://localhost:8080}
+      - VIKUNJA_SERVICE_ENOINTHELPER=${ENABLE_OTHELLO:-true}
+    volumes:
+      - ./data/files:/app/vikunja/files
+    networks:
+      - vikunja-network
+    ports:
+      - "${API_PORT:-3456}:3456"
+
+  frontend:
+    image: vikunja/frontend:latest
+    container_name: ${CONTAINER_NAME:-vikunja}-frontend
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      - VIKUNJA_API_URL=${API_URL:-http://localhost:3456/api/v1}
+    networks:
+      - vikunja-network
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+
+networks:
+  vikunja-network:
+    driver: bridge
