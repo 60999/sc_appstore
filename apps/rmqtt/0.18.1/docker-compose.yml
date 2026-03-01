@@ -15,8 +15,15 @@ services:
       - ./data/config:/etc/rmqtt
       - ./data/plugins:/app/rmqtt/rmqtt-plugins
       - ./data/jwt:/app/rmqtt/data/jwt
+      - ./init_jwt.sh:/docker-entrypoint.d/init_jwt.sh:ro
     environment:
       - TZ=${TIMEZONE:-Asia/Shanghai}
+      - JWT_AUTH_ENABLED=${JWT_AUTH_ENABLED:-false}
+      - JWT_PUBLIC_KEY_PEM=${JWT_PUBLIC_KEY_PEM}
+      - JWT_FROM=${JWT_FROM:-password}
+      - JWT_DISCONNECT_IF_EXPIRY=${JWT_DISCONNECT_IF_EXPIRY:-true}
+      - JWT_ISSUER=${JWT_ISSUER}
+      - JWT_CLAIMS_CONFIG=${JWT_CLAIMS_CONFIG}
     command: >
       --id 1
       --listen-addrs "0.0.0.0:1883"

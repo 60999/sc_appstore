@@ -73,7 +73,7 @@ additionalProperties:
       random: true
       required: true
       type: password
-    - default: 8080
+    - default: 9003
       edit: true
       envKey: PANEL_APP_PORT_HTTP
       labelEn: HTTP Port

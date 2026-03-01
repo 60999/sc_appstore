@@ -39,23 +39,37 @@ RMQTT 支持 Casdoor JWT 认证，配置步骤如下：
 
 在安装时选择"启用 JWT 认证"。
 
-### 2. 上传证书
+### 2. 粘贴公钥内容
 
-将 Casdoor 的 JWT 证书（PEM 格式）上传到服务器，例如：
+在"JWT 公钥"字段中粘贴 PEM 格式的公钥内容，例如：
+
 ```
-./data/jwt/jwt_cert.pem
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...
+-----END PUBLIC KEY-----
 ```
 
 ### 3. 配置说明
 
 | 配置项 | 说明 |
 |--------|------|
-| JWT 公钥/证书路径 | PEM 格式的公钥或证书文件路径 |
+| JWT 公钥（PEM 格式） | 直接粘贴 PEM 格式的公钥内容 |
 | JWT 存放位置 | JWT 放在 MQTT 密码或用户名字段 |
 | JWT 过期后断开连接 | JWT 过期后是否断开客户端连接 |
 | JWT 签发者 | 可选，验证 JWT 的 issuer |
+| JWT Claims 配置 | 可选，粘贴 TOML 格式的 claims 配置 |
 
-### 4. 客户端连接
+### 4. JWT Claims 配置示例
+
+如需自定义 claims 验证，可在"JWT Claims 配置"字段粘贴 TOML 内容：
+
+```toml
+## 自定义 claims 配置
+jwt_claims_username = "preferred_username"
+jwt_claims_superuser = "is_superuser"
+```
+
+### 5. 客户端连接
 
 客户端连接时，将 JWT 放在密码字段（默认）：
 ```

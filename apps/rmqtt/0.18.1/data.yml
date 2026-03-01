@@ -5,6 +5,15 @@ additionalProperties:
       envKey: PANEL_APP_PORT_MQTT
       labelEn: MQTT TCP Port
       labelZh: MQTT TCP 端口
+      label:
+        en: MQTT TCP Port
+        ja: MQTT TCP ポート
+        ms: Port TCP MQTT
+        pt-br: Porta TCP MQTT
+        ru: TCP-порт MQTT
+        ko: MQTT TCP 포트
+        zh: MQTT TCP 端口
+        zh-Hant: MQTT TCP 埠
       required: true
       rule: paramPort
       type: number
@@ -13,6 +22,15 @@ additionalProperties:
       envKey: PANEL_APP_PORT_MQTTS
       labelEn: MQTT TLS Port
       labelZh: MQTT TLS 端口
+      label:
+        en: MQTT TLS Port
+        ja: MQTT TLS ポート
+        ms: Port TLS MQTT
+        pt-br: Porta TLS MQTT
+        ru: TLS-порт MQTT
+        ko: MQTT TLS 포트
+        zh: MQTT TLS 端口
+        zh-Hant: MQTT TLS 埠
       required: true
       rule: paramPort
       type: number
@@ -21,6 +39,15 @@ additionalProperties:
       envKey: PANEL_APP_PORT_HTTP
       labelEn: HTTP API Port
       labelZh: HTTP API 端口
+      label:
+        en: HTTP API Port
+        ja: HTTP API ポート
+        ms: Port API HTTP
+        pt-br: Porta API HTTP
+        ru: HTTP API-порт
+        ko: HTTP API 포트
+        zh: HTTP API 端口
+        zh-Hant: HTTP API 埠
       required: true
       rule: paramPort
       type: number
@@ -29,6 +56,15 @@ additionalProperties:
       envKey: PANEL_APP_PORT_WS
       labelEn: WebSocket Port
       labelZh: WebSocket 端口
+      label:
+        en: WebSocket Port
+        ja: WebSocket ポート
+        ms: Port WebSocket
+        pt-br: Porta WebSocket
+        ru: WebSocket-порт
+        ko: WebSocket 포트
+        zh: WebSocket 端口
+        zh-Hant: WebSocket 埠
       required: true
       rule: paramPort
       type: number
@@ -44,6 +80,15 @@ additionalProperties:
       envKey: JWT_AUTH_ENABLED
       labelEn: Enable JWT Authentication
       labelZh: 启用 JWT 认证
+      label:
+        en: Enable JWT Authentication
+        ja: JWT認証を有効にする
+        ms: Dayakan Pengesahan JWT
+        pt-br: Habilitar Autenticação JWT
+        ru: Включить JWT-аутентификацию
+        ko: JWT 인증 활성화
+        zh: 启用 JWT 认证
+        zh-Hant: 啟用 JWT 認證
       required: true
       type: select
       values:
@@ -53,9 +98,18 @@ additionalProperties:
           value: "true"
     - default: ""
       edit: true
-      envKey: JWT_PUBLIC_KEY_PATH
-      labelEn: JWT Public Key/Certificate Path
-      labelZh: JWT 公钥/证书路径
+      envKey: JWT_PUBLIC_KEY_PEM
+      labelEn: JWT Public Key (PEM format, paste content)
+      labelZh: JWT 公钥（PEM 格式，粘贴内容）
+      label:
+        en: JWT Public Key (PEM format, paste content)
+        ja: JWT公開鍵（PEM形式、コンテンツを貼り付け）
+        ms: Kunci Awam JWT (format PEM, tampal kandungan)
+        pt-br: Chave Pública JWT (formato PEM, cole o conteúdo)
+        ru: Открытый ключ JWT (формат PEM, вставить содержимое)
+        ko: JWT 공개 키 (PEM 형식, 내용 붙여넣기)
+        zh: JWT 公钥（PEM 格式，粘贴内容）
+        zh-Hant: JWT 公鑰（PEM 格式，貼上內容）
       required: false
       type: text
     - default: "password"
@@ -63,6 +117,15 @@ additionalProperties:
       envKey: JWT_FROM
       labelEn: JWT Location
       labelZh: JWT 存放位置
+      label:
+        en: JWT Location
+        ja: JWTの場所
+        ms: Lokasi JWT
+        pt-br: Localização JWT
+        ru: Расположение JWT
+        ko: JWT 위치
+        zh: JWT 存放位置
+        zh-Hant: JWT 存放位置
       required: false
       type: select
       values:
@@ -75,6 +138,15 @@ additionalProperties:
       envKey: JWT_DISCONNECT_IF_EXPIRY
       labelEn: Disconnect on JWT Expiry
       labelZh: JWT 过期后断开连接
+      label:
+        en: Disconnect on JWT Expiry
+        ja: JWT有効期限切れ時に切断
+        ms: Putuskan sambungan apabila JWT tamat tempoh
+        pt-br: Desconectar ao expirar JWT
+        ru: Отключение при истечении JWT
+        ko: JWT 만료 시 연결 해제
+        zh: JWT 过期后断开连接
+        zh-Hant: JWT 過期後斷開連接
       required: false
       type: select
       values:
@@ -87,5 +159,30 @@ additionalProperties:
       envKey: JWT_ISSUER
       labelEn: JWT Issuer (Optional)
       labelZh: JWT 签发者（可选）
+      label:
+        en: JWT Issuer (Optional)
+        ja: JWT発行者（オプション）
+        ms: Pengeluar JWT (Pilihan)
+        pt-br: Emissor JWT (Opcional)
+        ru: Издатель JWT (необязательно)
+        ko: JWT 발급자 (선택사항)
+        zh: JWT 签发者（可选）
+        zh-Hant: JWT 簽發者（可選）
+      required: false
+      type: text
+    - default: ""
+      edit: true
+      envKey: JWT_CLAIMS_CONFIG
+      labelEn: JWT Claims Config (TOML format, paste content)
+      labelZh: JWT Claims 配置（TOML 格式，粘贴内容）
+      label:
+        en: JWT Claims Config (TOML format, paste content)
+        ja: JWTクレーム設定（TOML形式、コンテンツを貼り付け）
+        ms: Konfigurasi Tuntutan JWT (format TOML, tampal kandungan)
+        pt-br: Configuração de Claims JWT (formato TOML, cole o conteúdo)
+        ru: Конфигурация Claims JWT (формат TOML, вставить содержимое)
+        ko: JWT 클레임 설정 (TOML 형식, 내용 붙여넣기)
+        zh: JWT Claims 配置（TOML 格式，粘贴内容）
+        zh-Hant: JWT Claims 設定（TOML 格式，貼上內容）
       required: false
       type: text

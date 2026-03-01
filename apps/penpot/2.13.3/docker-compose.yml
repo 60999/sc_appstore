@@ -1,36 +1,13 @@
 services:
-  db:
-    image: postgres:15-alpine
-    container_name: ${CONTAINER_NAME}-db
-    restart: unless-stopped
-    networks:
-      - 1panel-network
-    environment:
-      - POSTGRES_USER=${PANEL_DB_USER}
-      - POSTGRES_PASSWORD=${PANEL_DB_USER_PASSWORD}
-      - POSTGRES_DB=${PANEL_DB_NAME}
-    volumes:
-      - ./data/postgres:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${PANEL_DB_USER}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    labels:
-      createdBy: "Apps"
-
   penpot-backend:
     image: penpot/backend:2.13.3
     container_name: ${CONTAINER_NAME}-backend
     restart: unless-stopped
     networks:
       - 1panel-network
-    depends_on:
-      db:
-        condition: service_healthy
     environment:
       - PENPOT_PUBLIC_URI=${PANEL_APP_URL}
-      - PENPOT_DATABASE_URI=postgresql://${PANEL_DB_USER}:${PANEL_DB_USER_PASSWORD}@db:5432/${PANEL_DB_NAME}
+      - PENPOT_DATABASE_URI=postgresql://${PANEL_DB_USER}:${PANEL_DB_USER_PASSWORD}@${PANEL_DB_HOST}:${PANEL_DB_PORT}/${PANEL_DB_NAME}
       - PENPOT_REDIS_URI=redis://:${PANEL_REDIS_ROOT_PASSWORD}@${PANEL_REDIS_HOST}:6379/0
       - PENPOT_FLAGS=enable-login-with-password disable-email-verification enable-preplanning
       - PENPOT_TELEMETRY_ENABLED=false
