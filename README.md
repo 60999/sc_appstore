@@ -92,108 +92,11 @@ rm -rf /opt/1panel/resource/apps/local/main.zip
 
 ### 国内网络脚本
 
-#### 镜像加速选项
-
-如果某个镜像加速不可用，可以尝试其他选项：
-
-| 加速服务 | URL 前缀 |
-|----------|----------|
-| ghp.ci | `https://ghp.ci/https://github.com/` |
-| ghproxy.cn | `https://ghproxy.cn/https://github.com/` |
-| mirror.ghproxy.com | `https://mirror.ghproxy.com/https://github.com/` |
-| gh-proxy.com | `https://gh-proxy.com/https://github.com/` |
-| gitclone.com | `https://gitclone.com/github.com/` |
-
-#### 脚本（使用 ghp.ci 加速）
-
-```bash
-#!/bin/bash
-
-# 1Panel 应用商店更新脚本（国内网络 - ghp.ci 加速）
-# 将应用直接部署到 /opt/1panel/resource/apps/local/ 目录
-STORE_URL="https://ghp.ci/https://github.com/60999/sc_appstore"
-LOCAL_DIR="/opt/1panel/resource/apps/local"
-TEMP_DIR="${LOCAL_DIR}/sc_appstore_temp"
-
-echo "开始更新 sc_appstore 应用商店..."
-
-# 清理临时目录
-rm -rf "${TEMP_DIR}"
-
-# 克隆最新版本
-git clone -b main "${STORE_URL}" "${TEMP_DIR}"
-
-# 检查是否克隆成功
-if [ ! -d "${TEMP_DIR}/apps" ]; then
-    echo "错误：克隆失败，请检查网络连接"
-    rm -rf "${TEMP_DIR}"
-    exit 1
-fi
-
-# 复制商店元数据文件到 local 目录
-cp -f "${TEMP_DIR}/data.yml" "${LOCAL_DIR}/"
-
-# 更新所有应用到 local 目录
-for app_dir in "${TEMP_DIR}/apps"/*; do
-    if [ -d "$app_dir" ]; then
-        app_name=$(basename "$app_dir")
-        echo "更新应用: ${app_name}"
-        rm -rf "${LOCAL_DIR}/${app_name}"
-        cp -rf "$app_dir" "${LOCAL_DIR}/"
-    fi
-done
-
-# 清理临时目录
-rm -rf "${TEMP_DIR}"
-
-echo "sc_appstore 应用商店更新完成！"
-echo "请在 1Panel 应用商店中刷新本地应用。"
-```
-
-#### 脚本（使用 ghproxy.cn 加速）
-
-```bash
-#!/bin/bash
-
-# 1Panel 应用商店更新脚本（国内网络 - ghproxy.cn 加速）
-STORE_URL="https://ghproxy.cn/https://github.com/60999/sc_appstore"
-LOCAL_DIR="/opt/1panel/resource/apps/local"
-TEMP_DIR="${LOCAL_DIR}/sc_appstore_temp"
-
-echo "开始更新 sc_appstore 应用商店..."
-
-rm -rf "${TEMP_DIR}"
-git clone -b main "${STORE_URL}" "${TEMP_DIR}"
-
-if [ ! -d "${TEMP_DIR}/apps" ]; then
-    echo "错误：克隆失败，请检查网络连接"
-    rm -rf "${TEMP_DIR}"
-    exit 1
-fi
-
-cp -f "${TEMP_DIR}/data.yml" "${LOCAL_DIR}/"
-
-for app_dir in "${TEMP_DIR}/apps"/*; do
-    if [ -d "$app_dir" ]; then
-        app_name=$(basename "$app_dir")
-        echo "更新应用: ${app_name}"
-        rm -rf "${LOCAL_DIR}/${app_name}"
-        cp -rf "$app_dir" "${LOCAL_DIR}/"
-    fi
-done
-
-rm -rf "${TEMP_DIR}"
-echo "sc_appstore 应用商店更新完成！"
-echo "请在 1Panel 应用商店中刷新本地应用。"
-```
-
-#### 脚本（使用压缩包方式，适合 git 克隆慢的情况）
-
 ```bash
 #!/bin/bash
 
 # ============================================
-# 1Panel 应用商店更新脚本（国内网络 - 压缩包方式）
+# 1Panel 应用商店更新脚本（国内网络）
 # 功能：自动选择最快镜像、下载、解压、更新应用
 # ============================================
 
@@ -207,7 +110,7 @@ EXTRACT_DIR="${LOCAL_DIR}/${GITHUB_REPO}-main"
 # 本仓库包含的应用列表
 APPS=("baserow" "penpot" "rmqtt" "spug" "vikunja")
 
-# 镜像加速域名列表（不含路径）
+# 镜像加速域名列表
 MIRROR_DOMAINS=(
     "ghproxy.cn"
     "mirror.ghproxy.com"
@@ -266,7 +169,6 @@ select_fastest_mirror() {
         echo "选择最快镜像: ${fastest_domain} (${fastest_time}ms)" >&2
     fi
     
-    # 只输出域名到stdout（用于变量捕获）
     echo "${fastest_domain}"
 }
 
