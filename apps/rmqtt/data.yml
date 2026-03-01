@@ -1,4 +1,4 @@
-name: RMQTT
+name: rmqtt
 tags:
     - 消息队列
 title: 高性能分布式MQTT消息代理
