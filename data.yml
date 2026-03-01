@@ -1,0 +1,26 @@
+name: sc_appstore
+tags:
+    - 应用商店
+title: SC应用商店
+description: 个人定制应用商店，包含RMQTT、Vikunja、Baserow、Spug、Penpot等应用
+additionalProperties:
+    key: sc_appstore
+    name: SC应用商店
+    tags:
+        - 应用商店
+        - 个人定制
+    shortDescZh: 个人定制应用商店
+    shortDescEn: Personal custom app store
+    description:
+        en: Personal custom app store containing RMQTT, Vikunja, Baserow, Spug, Penpot
+        zh: 个人定制应用商店，包含RMQTT、Vikunja、Baserow、Spug、Penpot等应用
+    type: website
+    crossVersionUpdate: false
+    limit: 0
+    recommend: 0
+    website: https://github.com/60999/sc_appstore
+    github: https://github.com/60999/sc_appstore
+    document: https://github.com/60999/sc_appstore
+    architectures:
+      - amd64
+      - arm64
