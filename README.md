@@ -194,29 +194,64 @@ echo "请在 1Panel 应用商店中刷新本地应用。"
 
 # 1Panel 应用商店更新脚本（国内网络 - 压缩包方式）
 # 适合 git clone 速度慢的情况
-STORE_URL="https://ghp.ci/https://github.com/60999/sc_appstore/archive/refs/heads/main.zip"
 LOCAL_DIR="/opt/1panel/resource/apps/local"
-TEMP_DIR="${LOCAL_DIR}/sc_appstore_temp"
 TEMP_ZIP="${LOCAL_DIR}/sc_appstore.zip"
 
 echo "开始更新 sc_appstore 应用商店..."
 
 # 清理临时文件
-rm -rf "${TEMP_DIR}" "${TEMP_ZIP}"
+rm -rf "${TEMP_ZIP}" "${LOCAL_DIR}/sc_appstore-main"
 
-# 下载压缩包
-wget -q -O "${TEMP_ZIP}" "${STORE_URL}"
+# 镜像加速列表（按优先级尝试）
+MIRRORS=(
+    "https://ghproxy.cn/https://github.com/60999/sc_appstore/archive/refs/heads/main.zip"
+    "https://mirror.ghproxy.com/https://github.com/60999/sc_appstore/archive/refs/heads/main.zip"
+    "https://ghp.ci/https://github.com/60999/sc_appstore/archive/refs/heads/main.zip"
+    "https://gh-proxy.com/https://github.com/60999/sc_appstore/archive/refs/heads/main.zip"
+)
 
-if [ ! -f "${TEMP_ZIP}" ]; then
-    echo "错误：下载失败，请检查网络连接"
+DOWNLOAD_SUCCESS=0
+
+for url in "${MIRRORS[@]}"; do
+    echo "尝试下载: ${url}"
+    
+    # 使用 curl 下载，设置超时和重试
+    if curl -fsSL --connect-timeout 30 --max-time 120 --retry 2 -o "${TEMP_ZIP}" "${url}"; then
+        # 验证是否为有效的 zip 文件
+        if file "${TEMP_ZIP}" | grep -q "Zip archive"; then
+            FILE_SIZE=$(stat -c%s "${TEMP_ZIP}" 2>/dev/null || echo "0")
+            if [ "$FILE_SIZE" -gt 1000 ]; then
+                echo "下载成功，文件大小: ${FILE_SIZE} 字节"
+                DOWNLOAD_SUCCESS=1
+                break
+            else
+                echo "文件太小，可能下载不完整"
+            fi
+        else
+            echo "下载的文件不是有效的 zip 压缩包"
+        fi
+    fi
+    
+    echo "该镜像下载失败，尝试下一个..."
+    rm -f "${TEMP_ZIP}"
+done
+
+if [ $DOWNLOAD_SUCCESS -eq 0 ]; then
+    echo "错误：所有镜像都下载失败，请检查网络连接"
+    rm -rf "${TEMP_ZIP}"
     exit 1
 fi
 
 # 解压
-unzip -q -o "${TEMP_ZIP}" -d "${LOCAL_DIR}/"
+echo "正在解压..."
+if ! unzip -q -o "${TEMP_ZIP}" -d "${LOCAL_DIR}/"; then
+    echo "错误：解压失败"
+    rm -rf "${TEMP_ZIP}" "${LOCAL_DIR}/sc_appstore-main"
+    exit 1
+fi
 
 if [ ! -d "${LOCAL_DIR}/sc_appstore-main/apps" ]; then
-    echo "错误：解压失败"
+    echo "错误：解压后找不到 apps 目录"
     rm -rf "${TEMP_ZIP}" "${LOCAL_DIR}/sc_appstore-main"
     exit 1
 fi
