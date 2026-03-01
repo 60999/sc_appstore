@@ -20,12 +20,12 @@
 ```
 ├── apps/                    # 应用目录
 │   └── [应用名称]/          # 具体应用
-│       ├── versions/        # 版本目录
-│       │   └── [版本号]/    # 具体版本
-│       │       ├── docker-compose.yml
-│       │       └── data.yml
+│       ├── [版本号]/        # 版本目录（直接在应用目录下）
+│       │   ├── docker-compose.yml
+│       │   └── data.yml
 │       ├── data.yml         # 应用元数据
 │       └── logo.png         # 应用图标
+├── data.yml                 # 商店元数据
 ├── README.md                # 项目说明
 └── LICENSE                  # 许可证
 ```
@@ -361,16 +361,15 @@ echo "验证安装..."
 VERIFY_FAILED=0
 for app in "${APPS[@]}"; do
     app_dir="${LOCAL_DIR}/${app}"
-    versions_dir="${app_dir}/versions"
     
-    if [ ! -d "${versions_dir}" ]; then
-        echo "  错误: ${app} 缺少 versions 目录"
+    if [ ! -d "${app_dir}" ]; then
+        echo "  错误: ${app} 目录不存在"
         VERIFY_FAILED=1
         continue
     fi
     
-    # 检查是否有版本目录
-    version_count=$(find "${versions_dir}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l)
+    # 检查是否有版本目录（直接在应用目录下）
+    version_count=$(find "${app_dir}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l)
     if [ "$version_count" -eq 0 ]; then
         echo "  错误: ${app} 没有版本目录"
         VERIFY_FAILED=1
@@ -378,7 +377,7 @@ for app in "${APPS[@]}"; do
     fi
     
     # 检查版本目录中是否有 docker-compose.yml
-    for ver_dir in "${versions_dir}"/*; do
+    for ver_dir in "${app_dir}"/*; do
         if [ -d "$ver_dir" ]; then
             ver_name=$(basename "$ver_dir")
             if [ ! -f "${ver_dir}/docker-compose.yml" ]; then
