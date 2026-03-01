@@ -31,50 +31,79 @@
 | 8083 | WebSocket 端口 |
 | 6060 | HTTP API 端口 |
 
-## JWT 认证配置（可选）
+## 配置文件说明
 
-RMQTT 支持 Casdoor JWT 认证，配置步骤如下：
+安装时可编辑以下配置文件：
 
-### 1. 启用 JWT 认证
+### 1. 主配置文件 (rmqtt.toml)
 
-在安装时选择"启用 JWT 认证"。
+控制 RMQTT 核心行为，包括：
+- 节点配置
+- 日志级别
+- 插件加载
+- 监听器配置
 
-### 2. 粘贴公钥内容
+### 2. ACL 配置文件 (rmqtt-acl.toml)
 
-在"JWT 公钥"字段中粘贴 PEM 格式的公钥内容，例如：
+访问控制列表，定义客户端发布/订阅权限。
 
-```
------BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...
------END PUBLIC KEY-----
-```
-
-### 3. 配置说明
-
-| 配置项 | 说明 |
-|--------|------|
-| JWT 公钥（PEM 格式） | 直接粘贴 PEM 格式的公钥内容 |
-| JWT 存放位置 | JWT 放在 MQTT 密码或用户名字段 |
-| JWT 过期后断开连接 | JWT 过期后是否断开客户端连接 |
-| JWT 签发者 | 可选，验证 JWT 的 issuer |
-| JWT Claims 配置 | 可选，粘贴 TOML 格式的 claims 配置 |
-
-### 4. JWT Claims 配置示例
-
-如需自定义 claims 验证，可在"JWT Claims 配置"字段粘贴 TOML 内容：
-
+默认配置允许所有已认证用户访问所有主题：
 ```toml
-## 自定义 claims 配置
-jwt_claims_username = "preferred_username"
-jwt_claims_superuser = "is_superuser"
+[{ access = "allow", users = "all", topics = ["#"] }]
 ```
 
-### 5. 客户端连接
+### 3. JWT 认证配置 (rmqtt-auth-jwt.toml)
 
-客户端连接时，将 JWT 放在密码字段（默认）：
+Casdoor JWT 认证配置，默认支持 RSA 公钥验证：
+```toml
+from = "password"
+encrypt = "public-key"
+public_key = "/app/rmqtt/data/jwt/jwt_cert.pem"
+disconnect_if_expiry = true
+validate_claims.exp = true
+```
+
+## JWT 认证配置
+
+### 1. 粘贴公钥/证书
+
+在"JWT 公钥/证书"字段中粘贴 Casdoor 的 JWT 证书内容（PEM 格式）：
+
+```
+-----BEGIN CERTIFICATE-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...
+-----END CERTIFICATE-----
+```
+
+### 2. 客户端连接
+
+客户端连接时，将 JWT 放在密码字段：
 ```
 Username: 任意
 Password: <JWT Token>
+```
+
+### 3. 自定义 JWT 配置
+
+如需自定义 JWT 验证，可修改 JWT 认证配置：
+
+```toml
+## JWT 存放位置: password 或 username
+from = "password"
+
+## 加密方式: public-key (RSA) 或 secret-key (HMAC)
+encrypt = "public-key"
+
+## 公钥文件路径
+public_key = "/app/rmqtt/data/jwt/jwt_cert.pem"
+
+## JWT 过期后断开连接
+disconnect_if_expiry = true
+
+## 验证 claims
+validate_claims.exp = true
+validate_claims.iss = "https://your-casdoor-domain"
+validate_claims.aud = ["mqtt"]
 ```
 
 ## 访问地址
@@ -85,15 +114,11 @@ Password: <JWT Token>
 - HTTP API: http://服务器IP:6060
 - 健康检查: http://服务器IP:6060/api/v1/health/check
 
-## 配置文件
+## 数据持久化
 
-配置文件位于 `./data/config/` 目录：
-- `rmqtt.toml` - 主配置文件
-- `rmqtt-acl.toml` - ACL 访问控制配置
-- `rmqtt-auth.toml` - 认证配置
-
-JWT 配置文件位于 `./data/plugins/` 目录：
-- `rmqtt-auth-jwt.toml` - JWT 认证配置
+配置文件和证书保存在以下目录：
+- `./data/log/` - 日志文件
+- `./data/jwt/` - JWT 证书文件
 
 ## 官方文档
 
