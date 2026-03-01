@@ -1,39 +1,17 @@
 services:
-  db:
-    image: postgres:15-alpine
-    container_name: ${CONTAINER_NAME}-db
-    restart: unless-stopped
-    networks:
-      - 1panel-network
-    environment:
-      - POSTGRES_USER=${PANEL_DB_USER}
-      - POSTGRES_PASSWORD=${PANEL_DB_USER_PASSWORD}
-      - POSTGRES_DB=${PANEL_DB_NAME}
-    volumes:
-      - ./data/db:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${PANEL_DB_USER}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    labels:
-      createdBy: "Apps"
-
   vikunja:
     image: vikunja/vikunja:2.1.0
     container_name: ${CONTAINER_NAME}
     restart: unless-stopped
     networks:
       - 1panel-network
-    depends_on:
-      db:
-        condition: service_healthy
     environment:
-      - VIKUNJA_DATABASE_HOST=db
+      - VIKUNJA_DATABASE_HOST=${PANEL_DB_HOST}
+      - VIKUNJA_DATABASE_PORT=${PANEL_DB_PORT}
       - VIKUNJA_DATABASE_PASSWORD=${PANEL_DB_USER_PASSWORD}
       - VIKUNJA_DATABASE_USER=${PANEL_DB_USER}
       - VIKUNJA_DATABASE_DATABASE=${PANEL_DB_NAME}
-      - VIKUNJA_DATABASE_TYPE=postgres
+      - VIKUNJA_DATABASE_TYPE=${PANEL_DB_TYPE}
       - VIKUNJA_SERVICE_JWTSECRET=${SECRET_KEY}
       - VIKUNJA_SERVICE_PUBLICURL=${PANEL_APP_URL}
     volumes:

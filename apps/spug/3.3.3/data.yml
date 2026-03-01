@@ -1,24 +1,45 @@
 additionalProperties:
   formFields:
-    - default: 80
-      edit: true
-      envKey: PANEL_APP_PORT_HTTP
-      labelEn: HTTP Port
-      labelZh: HTTP 端口
+    - default: mysql
+      envKey: PANEL_DB_TYPE
+      labelEn: Database Service
+      labelZh: 数据库服务
+      label:
+        en: Database Service
+        ja: データベースサービス
+        ms: Perkhidmatan Pangkalan Data
+        pt-br: Serviço de Banco de Dados
+        ru: Сервис базы данных
+        ko: 데이터베이스 서비스
+        zh: 数据库服务
+        zh-Hant: 數據庫服務
       required: true
-      rule: paramPort
-      type: number
-    - default: ""
-      envKey: PANEL_DB_HOST
-      key: postgresql
-      labelEn: PostgreSQL Database Service
-      labelZh: PostgreSQL 数据库服务
-      required: true
-      type: service
-    - default: spug_db
+      type: apps
+      child:
+        default: ""
+        envKey: PANEL_DB_HOST
+        required: true
+        type: service
+      values:
+        - label: MySQL
+          value: mysql
+        - label: MariaDB
+          value: mariadb
+        - label: PostgreSQL
+          value: postgres
+    - default: spug
       envKey: PANEL_DB_NAME
       labelEn: Database Name
       labelZh: 数据库名
+      label:
+        en: Database
+        ja: データベース
+        ms: Pangkalan Data
+        pt-br: Banco de Dados
+        ru: База данных
+        ko: 데이터베이스
+        zh: 数据库名
+        zh-Hant: 數據庫名
       random: true
       required: true
       rule: paramCommon
@@ -27,6 +48,15 @@ additionalProperties:
       envKey: PANEL_DB_USER
       labelEn: Database User
       labelZh: 数据库用户
+      label:
+        en: Database User
+        ja: データベースユーザー
+        ms: Pengguna Pangkalan Data
+        pt-br: Usuário do Banco de Dados
+        ru: Пользователь базы данных
+        ko: 데이터베이스 사용자
+        zh: 数据库用户
+        zh-Hant: 數據庫用戶
       random: true
       required: true
       rule: paramCommon
@@ -34,10 +64,36 @@ additionalProperties:
     - default: ""
       envKey: PANEL_DB_USER_PASSWORD
       labelEn: Database Password
-      labelZh: 数据库用户密码
+      labelZh: 数据库密码
+      label:
+        en: Database Password
+        ja: データベースパスワード
+        ms: Kata Laluan Pangkalan Data
+        pt-br: Senha do Banco de Dados
+        ru: Пароль базы данных
+        ko: 데이터베이스 비밀번호
+        zh: 数据库密码
+        zh-Hant: 數據庫密碼
       random: true
       required: true
       type: password
+    - default: 8080
+      edit: true
+      envKey: PANEL_APP_PORT_HTTP
+      labelEn: HTTP Port
+      labelZh: HTTP 端口
+      label:
+        en: HTTP Port
+        ja: HTTP ポート
+        ms: HTTP Port
+        pt-br: HTTP Porta
+        ru: HTTP Порт
+        ko: HTTP 포트
+        zh: HTTP 端口
+        zh-Hant: HTTP 埠
+      required: true
+      rule: paramPort
+      type: number
     - default: ""
       envKey: SECRET_KEY
       labelEn: Secret Key
