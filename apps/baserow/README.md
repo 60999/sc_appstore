@@ -36,7 +36,7 @@
 
 ### 端口说明
 
-- 默认 HTTP 端口为 `8080`（避免与系统服务冲突）
+- 默认 HTTP 端口为 `9003`（避免与系统服务冲突）
 - 如需使用 80 端口，请确保端口未被占用
 - 建议通过 1Panel 创建反向代理，使用域名访问
 
@@ -50,8 +50,8 @@
 
 ## 访问地址
 
-- Web 界面: http://服务器IP:8080
-- API 文档: http://服务器IP:8080/api/docs/
+- Web 界面: http://服务器IP:9003
+- API 文档: http://服务器IP:9003/api/docs/
 
 ## 默认账号
 
@@ -116,3 +116,7 @@ docker exec -i baserow-db psql -U baserow baserow < backup.sql
 
 https://baserow.io/docs/
 https://github.com/baserow/baserow
+
+## 仓库来源
+
+本应用配置来自：https://github.com/60999/sc_appstore

@@ -29,7 +29,7 @@
 
 ## 访问地址
 
-- Web 界面: http://localhost
+- Web 界面: http://服务器IP:9005
 
 ## 默认账号
 
@@ -142,3 +142,7 @@ docker exec -i spug-db psql -U spug spug < backup.sql
 
 https://ops.spug.cc/docs/about-spug/
 https://github.com/openspug/spug
+
+## 仓库来源
+
+本应用配置来自：https://github.com/60999/sc_appstore

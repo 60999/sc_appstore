@@ -30,8 +30,8 @@
 
 ## 访问地址
 
-- Web 界面: http://localhost
-- API: http://localhost:6060
+- Web 界面: http://服务器IP:9001
+- API: http://服务器IP:9002
 
 ## 默认账号
 
@@ -159,3 +159,7 @@ docker exec penpot-redis redis-cli BGSAVE
 
 https://penpot.app/docs/
 https://github.com/penpot/penpot
+
+## 仓库来源
+
+本应用配置来自：https://github.com/60999/sc_appstore

@@ -124,3 +124,7 @@ validate_claims.aud = ["mqtt"]
 
 https://github.com/rmqtt/rmqtt
 https://www.rmqttdoc.com/
+
+## 仓库来源
+
+本应用配置来自：https://github.com/60999/sc_appstore

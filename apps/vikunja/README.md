@@ -33,8 +33,8 @@
 
 ## 访问地址
 
-- 前端界面: http://localhost:8080
-- API: http://localhost:3456/api/v1
+- 前端界面: http://服务器IP:9004
+- API: http://服务器IP:9004/api/v1
 
 ## 默认账号
 
@@ -77,3 +77,7 @@ docker exec -i vikunja-db psql -U vikunja vikunja < backup.sql
 
 https://vikunja.io/docs/
 https://github.com/go-vikunja/vikunja
+
+## 仓库来源
+
+本应用配置来自：https://github.com/60999/sc_appstore
