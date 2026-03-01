@@ -356,13 +356,54 @@ for app_dir in "${EXTRACT_DIR}/apps"/*; do
     fi
 done
 
+# 验证安装
+echo "验证安装..."
+VERIFY_FAILED=0
+for app in "${APPS[@]}"; do
+    app_dir="${LOCAL_DIR}/${app}"
+    versions_dir="${app_dir}/versions"
+    
+    if [ ! -d "${versions_dir}" ]; then
+        echo "  错误: ${app} 缺少 versions 目录"
+        VERIFY_FAILED=1
+        continue
+    fi
+    
+    # 检查是否有版本目录
+    version_count=$(find "${versions_dir}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l)
+    if [ "$version_count" -eq 0 ]; then
+        echo "  错误: ${app} 没有版本目录"
+        VERIFY_FAILED=1
+        continue
+    fi
+    
+    # 检查版本目录中是否有 docker-compose.yml
+    for ver_dir in "${versions_dir}"/*; do
+        if [ -d "$ver_dir" ]; then
+            ver_name=$(basename "$ver_dir")
+            if [ ! -f "${ver_dir}/docker-compose.yml" ]; then
+                echo "  错误: ${app}/${ver_name} 缺少 docker-compose.yml"
+                VERIFY_FAILED=1
+            else
+                echo "  ✓ ${app}/${ver_name}"
+            fi
+        fi
+    done
+done
+
 # 清理临时文件
 rm -rf "${TEMP_ZIP}" "${EXTRACT_DIR}"
 
-echo "============================================"
-echo "${GITHUB_REPO} 应用商店更新完成！"
-echo "请在 1Panel 应用商店中刷新本地应用。"
-echo "============================================"
+if [ $VERIFY_FAILED -eq 1 ]; then
+    echo "============================================"
+    echo "警告：部分应用验证失败，请检查日志"
+    echo "============================================"
+else
+    echo "============================================"
+    echo "${GITHUB_REPO} 应用商店更新完成！"
+    echo "请在 1Panel 应用商店中刷新本地应用。"
+    echo "============================================"
+fi
 ```
 
 ### 国际互联网络脚本
