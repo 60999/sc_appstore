@@ -192,102 +192,173 @@ echo "请在 1Panel 应用商店中刷新本地应用。"
 ```bash
 #!/bin/bash
 
+# ============================================
 # 1Panel 应用商店更新脚本（国内网络 - 压缩包方式）
-# 适合 git clone 速度慢的情况
+# 功能：自动选择最快镜像、下载、解压、更新应用
+# ============================================
+
+# 基础配置
+GITHUB_USER="60999"
+GITHUB_REPO="sc_appstore"
 LOCAL_DIR="/opt/1panel/resource/apps/local"
 TEMP_ZIP="${LOCAL_DIR}/sc_appstore.zip"
+EXTRACT_DIR="${LOCAL_DIR}/${GITHUB_REPO}-main"
 
-echo "开始更新 sc_appstore 应用商店..."
+# 本仓库包含的应用列表
+APPS=("baserow" "penpot" "rmqtt" "spug" "vikunja")
 
-# 清理临时文件
-rm -rf "${TEMP_ZIP}" "${LOCAL_DIR}/sc_appstore-main"
-
-# 镜像加速列表（按优先级尝试）
-MIRRORS=(
-    "https://ghproxy.cn/https://github.com/60999/sc_appstore/archive/refs/heads/main.zip"
-    "https://mirror.ghproxy.com/https://github.com/60999/sc_appstore/archive/refs/heads/main.zip"
-    "https://ghp.ci/https://github.com/60999/sc_appstore/archive/refs/heads/main.zip"
-    "https://gh-proxy.com/https://github.com/60999/sc_appstore/archive/refs/heads/main.zip"
+# 镜像加速域名列表（不含路径）
+MIRROR_DOMAINS=(
+    "ghproxy.cn"
+    "mirror.ghproxy.com"
+    "ghp.ci"
+    "gh-proxy.com"
 )
 
-DOWNLOAD_SUCCESS=0
-
-for url in "${MIRRORS[@]}"; do
-    echo "尝试下载: ${url}"
+# ============================================
+# 函数：测试镜像响应速度
+# 返回：响应时间（毫秒），失败返回99999
+# ============================================
+test_mirror_speed() {
+    local domain="$1"
+    local test_url="https://${domain}/https://github.com"
+    local start_time end_time duration
     
-    # 使用 curl 下载，设置超时和重试
-    if curl -fsSL --connect-timeout 30 --max-time 120 --retry 2 -o "${TEMP_ZIP}" "${url}"; then
-        # 验证是否为有效的 zip 文件
-        if file "${TEMP_ZIP}" | grep -q "Zip archive"; then
-            FILE_SIZE=$(stat -c%s "${TEMP_ZIP}" 2>/dev/null || echo "0")
-            if [ "$FILE_SIZE" -gt 1000 ]; then
-                echo "下载成功，文件大小: ${FILE_SIZE} 字节"
-                DOWNLOAD_SUCCESS=1
-                break
-            else
-                echo "文件太小，可能下载不完整"
+    start_time=$(date +%s%3N 2>/dev/null || date +%s)000
+    
+    if curl -fsSL --connect-timeout 5 --max-time 10 -o /dev/null "${test_url}" 2>/dev/null; then
+        end_time=$(date +%s%3N 2>/dev/null || date +%s)000
+        duration=$((end_time - start_time))
+        echo "${duration}"
+    else
+        echo "99999"
+    fi
+}
+
+# ============================================
+# 函数：选择最快的镜像
+# 返回：最快的镜像域名
+# ============================================
+select_fastest_mirror() {
+    local fastest_domain=""
+    local fastest_time=99999
+    
+    echo "正在检测镜像速度..."
+    
+    for domain in "${MIRROR_DOMAINS[@]}"; do
+        echo -n "  测试 ${domain}... "
+        time_ms=$(test_mirror_speed "${domain}")
+        
+        if [ "$time_ms" -lt 99999 ]; then
+            echo "${time_ms}ms"
+            if [ "$time_ms" -lt "$fastest_time" ]; then
+                fastest_time="$time_ms"
+                fastest_domain="$domain"
             fi
         else
-            echo "下载的文件不是有效的 zip 压缩包"
+            echo "超时"
         fi
+    done
+    
+    if [ -z "$fastest_domain" ]; then
+        echo "警告：所有镜像都不可用，尝试直接下载"
+        fastest_domain=""
+    else
+        echo "选择最快镜像: ${fastest_domain} (${fastest_time}ms)"
     fi
     
-    echo "该镜像下载失败，尝试下一个..."
-    rm -f "${TEMP_ZIP}"
-done
+    echo "${fastest_domain}"
+}
 
-if [ $DOWNLOAD_SUCCESS -eq 0 ]; then
-    echo "错误：所有镜像都下载失败，请检查网络连接"
+# ============================================
+# 主流程
+# ============================================
+echo "============================================"
+echo "开始更新 ${GITHUB_REPO} 应用商店..."
+echo "============================================"
+
+# 清理临时文件
+rm -rf "${TEMP_ZIP}" "${EXTRACT_DIR}"
+
+# 选择最快的镜像
+FASTEST_MIRROR=$(select_fastest_mirror)
+
+# 构建下载URL
+ZIP_PATH="/${GITHUB_USER}/${GITHUB_REPO}/archive/refs/heads/main.zip"
+if [ -n "$FASTEST_MIRROR" ]; then
+    DOWNLOAD_URL="https://${FASTEST_MIRROR}/https://github.com${ZIP_PATH}"
+else
+    DOWNLOAD_URL="https://github.com${ZIP_PATH}"
+fi
+
+echo "下载地址: ${DOWNLOAD_URL}"
+
+# 下载文件
+echo "正在下载..."
+if ! curl -fSL --connect-timeout 30 --max-time 180 --retry 3 \
+    -o "${TEMP_ZIP}" "${DOWNLOAD_URL}"; then
+    echo "错误：下载失败"
     rm -rf "${TEMP_ZIP}"
     exit 1
 fi
+
+# 验证文件
+if ! file "${TEMP_ZIP}" | grep -q "Zip archive"; then
+    echo "错误：下载的文件不是有效的 zip 压缩包"
+    rm -rf "${TEMP_ZIP}"
+    exit 1
+fi
+
+FILE_SIZE=$(stat -c%s "${TEMP_ZIP}" 2>/dev/null || echo "0")
+if [ "$FILE_SIZE" -lt 1000 ]; then
+    echo "错误：文件太小 (${FILE_SIZE} 字节)，可能下载不完整"
+    rm -rf "${TEMP_ZIP}"
+    exit 1
+fi
+echo "下载成功，文件大小: ${FILE_SIZE} 字节"
 
 # 解压
 echo "正在解压..."
 if ! unzip -q -o "${TEMP_ZIP}" -d "${LOCAL_DIR}/"; then
     echo "错误：解压失败"
-    rm -rf "${TEMP_ZIP}" "${LOCAL_DIR}/sc_appstore-main"
+    rm -rf "${TEMP_ZIP}" "${EXTRACT_DIR}"
     exit 1
 fi
 
-if [ ! -d "${LOCAL_DIR}/sc_appstore-main/apps" ]; then
+if [ ! -d "${EXTRACT_DIR}/apps" ]; then
     echo "错误：解压后找不到 apps 目录"
-    rm -rf "${TEMP_ZIP}" "${LOCAL_DIR}/sc_appstore-main"
+    rm -rf "${TEMP_ZIP}" "${EXTRACT_DIR}"
     exit 1
 fi
 
-# 复制商店元数据文件
-cp -f "${LOCAL_DIR}/sc_appstore-main/data.yml" "${LOCAL_DIR}/"
+# 复制商店元数据
+cp -f "${EXTRACT_DIR}/data.yml" "${LOCAL_DIR}/"
 
-# 定义本仓库包含的应用列表（小写）
-APPS=("baserow" "penpot" "rmqtt" "spug" "vikunja")
-
-# 清理旧的应用目录（包括可能存在的大写目录）
+# 清理旧应用目录（包括各种大小写变体）
+echo "清理旧版本..."
 for app in "${APPS[@]}"; do
-    # 删除小写目录
     rm -rf "${LOCAL_DIR}/${app}"
-    # 删除首字母大写目录（旧版本可能存在）
-    app_cap="$(echo ${app:0:1} | tr '[:lower:]' '[:upper:]')${app:1}"
-    rm -rf "${LOCAL_DIR}/${app_cap}"
-    # 删除全大写目录
-    app_upper=$(echo "$app" | tr '[:lower:]' '[:upper:]')
-    rm -rf "${LOCAL_DIR}/${app_upper}"
+    rm -rf "${LOCAL_DIR}/$(echo "${app^}")"  # 首字母大写
+    rm -rf "${LOCAL_DIR}/$(echo "$app" | tr '[:lower:]' '[:upper:]')"  # 全大写
 done
 
-# 更新所有应用
-for app_dir in "${LOCAL_DIR}/sc_appstore-main/apps"/*; do
+# 安装新应用
+echo "安装应用..."
+for app_dir in "${EXTRACT_DIR}/apps"/*; do
     if [ -d "$app_dir" ]; then
         app_name=$(basename "$app_dir")
-        echo "更新应用: ${app_name}"
+        echo "  - ${app_name}"
         cp -rf "$app_dir" "${LOCAL_DIR}/"
     fi
 done
 
 # 清理临时文件
-rm -rf "${TEMP_ZIP}" "${LOCAL_DIR}/sc_appstore-main"
+rm -rf "${TEMP_ZIP}" "${EXTRACT_DIR}"
 
-echo "sc_appstore 应用商店更新完成！"
+echo "============================================"
+echo "${GITHUB_REPO} 应用商店更新完成！"
 echo "请在 1Panel 应用商店中刷新本地应用。"
+echo "============================================"
 ```
 
 ### 国际互联网络脚本
@@ -295,36 +366,63 @@ echo "请在 1Panel 应用商店中刷新本地应用。"
 ```bash
 #!/bin/bash
 
+# ============================================
 # 1Panel 应用商店更新脚本（国际网络）
-# 将应用直接部署到 /opt/1panel/resource/apps/local/ 目录
-STORE_URL="https://github.com/60999/sc_appstore"
-LOCAL_DIR="/opt/1panel/resource/apps/local"
-TEMP_DIR="${LOCAL_DIR}/sc_appstore_temp"
+# 功能：直接从 GitHub 克隆、更新应用
+# ============================================
 
-echo "开始更新 sc_appstore 应用商店..."
+# 基础配置
+GITHUB_USER="60999"
+GITHUB_REPO="sc_appstore"
+LOCAL_DIR="/opt/1panel/resource/apps/local"
+TEMP_DIR="${LOCAL_DIR}/${GITHUB_REPO}_temp"
+
+# 本仓库包含的应用列表
+APPS=("baserow" "penpot" "rmqtt" "spug" "vikunja")
+
+# ============================================
+# 主流程
+# ============================================
+echo "============================================"
+echo "开始更新 ${GITHUB_REPO} 应用商店..."
+echo "============================================"
 
 # 清理临时目录
 rm -rf "${TEMP_DIR}"
 
-# 克隆最新版本
-git clone -b main "${STORE_URL}" "${TEMP_DIR}"
+# 克隆仓库
+STORE_URL="https://github.com/${GITHUB_USER}/${GITHUB_REPO}"
+echo "克隆地址: ${STORE_URL}"
 
-# 检查是否克隆成功
-if [ ! -d "${TEMP_DIR}/apps" ]; then
+if ! git clone -b main "${STORE_URL}" "${TEMP_DIR}"; then
     echo "错误：克隆失败，请检查网络连接"
     rm -rf "${TEMP_DIR}"
     exit 1
 fi
 
-# 复制商店元数据文件到 local 目录
+if [ ! -d "${TEMP_DIR}/apps" ]; then
+    echo "错误：克隆后找不到 apps 目录"
+    rm -rf "${TEMP_DIR}"
+    exit 1
+fi
+
+# 复制商店元数据
 cp -f "${TEMP_DIR}/data.yml" "${LOCAL_DIR}/"
 
-# 更新所有应用到 local 目录
+# 清理旧应用目录
+echo "清理旧版本..."
+for app in "${APPS[@]}"; do
+    rm -rf "${LOCAL_DIR}/${app}"
+    rm -rf "${LOCAL_DIR}/$(echo "${app^}")"
+    rm -rf "${LOCAL_DIR}/$(echo "$app" | tr '[:lower:]' '[:upper:]')"
+done
+
+# 安装新应用
+echo "安装应用..."
 for app_dir in "${TEMP_DIR}/apps"/*; do
     if [ -d "$app_dir" ]; then
         app_name=$(basename "$app_dir")
-        echo "更新应用: ${app_name}"
-        rm -rf "${LOCAL_DIR}/${app_name}"
+        echo "  - ${app_name}"
         cp -rf "$app_dir" "${LOCAL_DIR}/"
     fi
 done
@@ -332,8 +430,10 @@ done
 # 清理临时目录
 rm -rf "${TEMP_DIR}"
 
-echo "sc_appstore 应用商店更新完成！"
+echo "============================================"
+echo "${GITHUB_REPO} 应用商店更新完成！"
 echo "请在 1Panel 应用商店中刷新本地应用。"
+echo "============================================"
 ```
 
 ### 设置计划任务
