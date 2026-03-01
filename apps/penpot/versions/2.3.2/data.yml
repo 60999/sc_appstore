@@ -1,0 +1,76 @@
+additionalProperties:
+  formFields:
+    - default: 80
+      edit: true
+      envKey: PANEL_APP_PORT_HTTP
+      labelEn: HTTP Port
+      labelZh: HTTP 端口
+      required: true
+      rule: paramPort
+      type: number
+    - default: 6060
+      edit: true
+      envKey: PANEL_APP_PORT_BACKEND
+      labelEn: Backend Port
+      labelZh: 后端端口
+      required: true
+      rule: paramPort
+      type: number
+    - default: ""
+      envKey: PANEL_DB_HOST
+      key: postgresql
+      labelEn: PostgreSQL Database Service
+      labelZh: PostgreSQL 数据库服务
+      required: true
+      type: service
+    - default: penpot_db
+      envKey: PANEL_DB_NAME
+      labelEn: Database Name
+      labelZh: 数据库名
+      random: true
+      required: true
+      rule: paramCommon
+      type: text
+    - default: penpot
+      envKey: PANEL_DB_USER
+      labelEn: Database User
+      labelZh: 数据库用户
+      random: true
+      required: true
+      rule: paramCommon
+      type: text
+    - default: ""
+      envKey: PANEL_DB_USER_PASSWORD
+      labelEn: Database Password
+      labelZh: 数据库用户密码
+      random: true
+      required: true
+      type: password
+    - default: ""
+      envKey: PANEL_REDIS_HOST
+      key: redis
+      labelEn: Redis Service
+      labelZh: Redis 服务
+      required: true
+      type: service
+    - default: ""
+      disabled: true
+      envKey: PANEL_REDIS_ROOT_PASSWORD
+      labelEn: Redis Password
+      labelZh: Redis 密码
+      type: text
+    - default: ""
+      envKey: SECRET_KEY
+      labelEn: Secret Key
+      labelZh: 密钥
+      random: true
+      required: true
+      type: password
+    - default: ""
+      edit: true
+      envKey: PANEL_APP_URL
+      labelEn: Application URL
+      labelZh: 应用访问地址
+      required: true
+      rule: paramHttp
+      type: text

@@ -6,28 +6,18 @@ services:
     networks:
       - 1panel-network
     environment:
-      - POSTGRES_USER=${DB_USER:-baserow}
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-baserow}
-      - POSTGRES_DB=${DB_NAME:-baserow}
+      - POSTGRES_USER=${PANEL_DB_USER}
+      - POSTGRES_PASSWORD=${PANEL_DB_USER_PASSWORD}
+      - POSTGRES_DB=${PANEL_DB_NAME}
     volumes:
       - ./data/db:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-baserow}"]
+      test: ["CMD-SHELL", "pg_isready -U ${PANEL_DB_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
-
-  redis:
-    image: redis:7-alpine
-    container_name: ${CONTAINER_NAME}-redis
-    restart: unless-stopped
-    networks:
-      - 1panel-network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    labels:
+      createdBy: "Apps"
 
   baserow:
     image: baserow/baserow:1.29.3
@@ -38,17 +28,15 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      redis:
-        condition: service_healthy
     environment:
-      - BASEROW_PUBLIC_URL=${PANEL_APP_URL:-http://localhost}
+      - BASEROW_PUBLIC_URL=${PANEL_APP_URL}
       - DATABASE_HOST=db
-      - DATABASE_NAME=${DB_NAME:-baserow}
-      - DATABASE_USER=${DB_USER:-baserow}
-      - DATABASE_PASSWORD=${DB_PASSWORD:-baserow}
-      - REDIS_HOST=redis
+      - DATABASE_NAME=${PANEL_DB_NAME}
+      - DATABASE_USER=${PANEL_DB_USER}
+      - DATABASE_PASSWORD=${PANEL_DB_USER_PASSWORD}
       - SECRET_KEY=${SECRET_KEY}
       - BASEROW_JWT_SIGNING_KEY=${JWT_KEY}
+      - BASEROW_AMOUNT_OF_GUNICORN_WORKERS=${GUNICORN_WORKERS:-2}
     ports:
       - ${PANEL_APP_PORT_HTTP}:80
     volumes:

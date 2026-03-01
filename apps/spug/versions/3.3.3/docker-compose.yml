@@ -6,28 +6,18 @@ services:
     networks:
       - 1panel-network
     environment:
-      - POSTGRES_USER=${DB_USER:-spug}
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-spug}
-      - POSTGRES_DB=${DB_NAME:-spug}
+      - POSTGRES_USER=${PANEL_DB_USER}
+      - POSTGRES_PASSWORD=${PANEL_DB_USER_PASSWORD}
+      - POSTGRES_DB=${PANEL_DB_NAME}
     volumes:
       - ./data/db:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-spug}"]
+      test: ["CMD-SHELL", "pg_isready -U ${PANEL_DB_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
-
-  redis:
-    image: redis:7-alpine
-    container_name: ${CONTAINER_NAME}-redis
-    restart: unless-stopped
-    networks:
-      - 1panel-network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    labels:
+      createdBy: "Apps"
 
   spug:
     image: openspug/spug:3.3.3
@@ -38,15 +28,11 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      redis:
-        condition: service_healthy
     environment:
       - DATABASE_HOST=db
-      - DATABASE_NAME=${DB_NAME:-spug}
-      - DATABASE_USER=${DB_USER:-spug}
-      - DATABASE_PASSWORD=${DB_PASSWORD:-spug}
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      - DATABASE_NAME=${PANEL_DB_NAME}
+      - DATABASE_USER=${PANEL_DB_USER}
+      - DATABASE_PASSWORD=${PANEL_DB_USER_PASSWORD}
       - SECRET_KEY=${SECRET_KEY}
     ports:
       - ${PANEL_APP_PORT_HTTP}:80

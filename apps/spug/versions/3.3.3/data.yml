@@ -1,0 +1,47 @@
+additionalProperties:
+  formFields:
+    - default: 80
+      edit: true
+      envKey: PANEL_APP_PORT_HTTP
+      labelEn: HTTP Port
+      labelZh: HTTP 端口
+      required: true
+      rule: paramPort
+      type: number
+    - default: ""
+      envKey: PANEL_DB_HOST
+      key: postgresql
+      labelEn: PostgreSQL Database Service
+      labelZh: PostgreSQL 数据库服务
+      required: true
+      type: service
+    - default: spug_db
+      envKey: PANEL_DB_NAME
+      labelEn: Database Name
+      labelZh: 数据库名
+      random: true
+      required: true
+      rule: paramCommon
+      type: text
+    - default: spug
+      envKey: PANEL_DB_USER
+      labelEn: Database User
+      labelZh: 数据库用户
+      random: true
+      required: true
+      rule: paramCommon
+      type: text
+    - default: ""
+      envKey: PANEL_DB_USER_PASSWORD
+      labelEn: Database Password
+      labelZh: 数据库用户密码
+      random: true
+      required: true
+      type: password
+    - default: ""
+      envKey: SECRET_KEY
+      labelEn: Secret Key
+      labelZh: 密钥
+      random: true
+      required: true
+      type: password

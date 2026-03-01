@@ -6,16 +6,18 @@ services:
     networks:
       - 1panel-network
     environment:
-      - POSTGRES_USER=${DB_USER:-vikunja}
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-vikunja}
-      - POSTGRES_DB=${DB_NAME:-vikunja}
+      - POSTGRES_USER=${PANEL_DB_USER}
+      - POSTGRES_PASSWORD=${PANEL_DB_USER_PASSWORD}
+      - POSTGRES_DB=${PANEL_DB_NAME}
     volumes:
       - ./data/db:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-vikunja}"]
+      test: ["CMD-SHELL", "pg_isready -U ${PANEL_DB_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
+    labels:
+      createdBy: "Apps"
 
   api:
     image: vikunja/api:0.24.6
@@ -28,12 +30,12 @@ services:
         condition: service_healthy
     environment:
       - VIKUNJA_DATABASE_HOST=db
-      - VIKUNJA_DATABASE_PASSWORD=${DB_PASSWORD:-vikunja}
-      - VIKUNJA_DATABASE_USER=${DB_USER:-vikunja}
-      - VIKUNJA_DATABASE_DATABASE=${DB_NAME:-vikunja}
+      - VIKUNJA_DATABASE_PASSWORD=${PANEL_DB_USER_PASSWORD}
+      - VIKUNJA_DATABASE_USER=${PANEL_DB_USER}
+      - VIKUNJA_DATABASE_DATABASE=${PANEL_DB_NAME}
       - VIKUNJA_DATABASE_TYPE=postgres
-      - VIKUNJA_SERVICE_JWTSECRET=${JWT_SECRET}
-      - VIKUNJA_SERVICE_FRONTENDURL=${PANEL_APP_URL:-http://localhost}
+      - VIKUNJA_SERVICE_JWTSECRET=${SECRET_KEY}
+      - VIKUNJA_SERVICE_FRONTENDURL=${PANEL_APP_URL}
     volumes:
       - ./data/files:/app/vikunja/files
     ports:
