@@ -3,8 +3,8 @@ additionalProperties:
     - default: 1883
       edit: true
       envKey: PANEL_APP_PORT_MQTT
-      labelEn: MQTT Port
-      labelZh: MQTT 端口
+      labelEn: MQTT TCP Port
+      labelZh: MQTT TCP 端口
       required: true
       rule: paramPort
       type: number
@@ -24,10 +24,68 @@ additionalProperties:
       required: true
       rule: paramPort
       type: number
-    - default: Asia/Shanghai
+    - default: 8083
+      edit: true
+      envKey: PANEL_APP_PORT_WS
+      labelEn: WebSocket Port
+      labelZh: WebSocket 端口
+      required: true
+      rule: paramPort
+      type: number
+    - default: "Asia/Shanghai"
       edit: true
       envKey: TIMEZONE
       labelEn: Timezone
       labelZh: 时区
+      required: false
+      type: text
+    - default: "false"
+      edit: true
+      envKey: JWT_AUTH_ENABLED
+      labelEn: Enable JWT Authentication
+      labelZh: 启用 JWT 认证
+      required: true
+      type: select
+      values:
+        - label: 禁用
+          value: "false"
+        - label: 启用（Casdoor JWT）
+          value: "true"
+    - default: ""
+      edit: true
+      envKey: JWT_PUBLIC_KEY_PATH
+      labelEn: JWT Public Key/Certificate Path
+      labelZh: JWT 公钥/证书路径
+      required: false
+      type: text
+    - default: "password"
+      edit: true
+      envKey: JWT_FROM
+      labelEn: JWT Location
+      labelZh: JWT 存放位置
+      required: false
+      type: select
+      values:
+        - label: 密码字段
+          value: "password"
+        - label: 用户名字段
+          value: "username"
+    - default: "true"
+      edit: true
+      envKey: JWT_DISCONNECT_IF_EXPIRY
+      labelEn: Disconnect on JWT Expiry
+      labelZh: JWT 过期后断开连接
+      required: false
+      type: select
+      values:
+        - label: 是
+          value: "true"
+        - label: 否
+          value: "false"
+    - default: ""
+      edit: true
+      envKey: JWT_ISSUER
+      labelEn: JWT Issuer (Optional)
+      labelZh: JWT 签发者（可选）
       required: false
       type: text

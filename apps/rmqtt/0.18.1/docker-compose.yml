@@ -9,15 +9,19 @@ services:
       - ${PANEL_APP_PORT_MQTT}:1883
       - ${PANEL_APP_PORT_MQTTS}:8883
       - ${PANEL_APP_PORT_HTTP}:6060
+      - ${PANEL_APP_PORT_WS}:8083
     volumes:
       - ./data/log:/var/log/rmqtt
       - ./data/config:/etc/rmqtt
+      - ./data/plugins:/app/rmqtt/rmqtt-plugins
+      - ./data/jwt:/app/rmqtt/data/jwt
     environment:
       - TZ=${TIMEZONE:-Asia/Shanghai}
     command: >
       --id 1
       --listen-addrs "0.0.0.0:1883"
       --listen-addrs "0.0.0.0:8883"
+      --ws-listen-addrs "0.0.0.0:8083"
       --http-listen-addr "0.0.0.0:6060"
     labels:
       createdBy: "Apps"

@@ -23,15 +23,35 @@
 
 ## 使用说明
 
-1. 复制 `.env.sample` 为 `.env`
-2. 修改 `SECRET_KEY` 和 `JWT_KEY` 为强随机字符串（重要！）
-3. 根据需要配置 SMTP 邮件服务
-4. 运行 `docker-compose up -d`
+### 应用访问地址配置
+
+**重要**：应用访问地址（`PANEL_APP_URL`）必须正确配置，否则应用可能无法正常工作。
+
+配置格式：`http://域名:端口` 或 `https://域名`
+
+示例：
+- 使用域名：`https://baserow.example.com`
+- 使用 IP + 端口：`http://192.168.1.100:8080`
+- 使用 1Panel 反向代理：`https://baserow.example.com`（推荐）
+
+### 端口说明
+
+- 默认 HTTP 端口为 `8080`（避免与系统服务冲突）
+- 如需使用 80 端口，请确保端口未被占用
+- 建议通过 1Panel 创建反向代理，使用域名访问
+
+### 安装步骤
+
+1. 在 1Panel 应用商店中选择 Baserow
+2. 配置数据库服务（选择已安装的 PostgreSQL）
+3. 填写应用访问地址（必须与实际访问地址一致）
+4. 点击安装
+5. 安装完成后，通过配置的地址访问
 
 ## 访问地址
 
-- Web 界面: http://localhost
-- API 文档: http://localhost/api/docs/
+- Web 界面: http://服务器IP:8080
+- API 文档: http://服务器IP:8080/api/docs/
 
 ## 默认账号
 

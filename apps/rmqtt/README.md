@@ -11,63 +11,77 @@
 - 分布式集群支持
 - 内置 AUTH/ACL
 - HTTP AUTH/ACL
-- JWT AUTH/ACL
+- JWT AUTH/ACL（支持 Casdoor）
 - WebHook 支持
 - HTTP APIs
 - $SYS 系统主题
 - 会话信息存储
 - 未过期消息存储
 - MQTT 桥接（入站/出站）
-- Apache Kafka 桥接（入站/出站）
-- Apache Pulsar 桥接（入站/出站）
-- NATS 桥接（入站/出站）
 - TLS 支持
 - WebSocket 支持
-- WebSocket-TLS 支持
-- MQTT over QUIC 支持
 - 可扩展插件支持
-- 指标与统计
-- 速率限制
-- Inflight 和队列管理
-- 消息重发
 
-## 目录说明
+## 端口说明
 
-- `log/` - 日志目录
-- `config/` - 配置文件目录
+| 端口 | 用途 |
+|------|------|
+| 1883 | MQTT TCP 端口 |
+| 8883 | MQTT TLS 端口 |
+| 8083 | WebSocket 端口 |
+| 6060 | HTTP API 端口 |
 
-## 使用说明
+## JWT 认证配置（可选）
 
-### 单节点模式
+RMQTT 支持 Casdoor JWT 认证，配置步骤如下：
 
-1. 复制 `.env.sample` 为 `.env`
-2. 保持默认配置
-3. 运行 `docker-compose up -d`
+### 1. 启用 JWT 认证
 
-### 集群模式
+在安装时选择"启用 JWT 认证"。
 
-1. 复制 `.env.sample` 为 `.env`
-2. 修改以下配置：
-   - `NODE_ID` - 设置节点ID（1、2、3...）
-   - `PLUGINS_DEFAULT_STARTUPS` - 设置为 `rmqtt-cluster-raft`
-   - `NODE_GRPC_ADDRS` - 配置所有节点的 gRPC 地址
-   - `RAFT_PEER_ADDRS` - 配置所有节点的 Raft 地址
-3. 运行 `docker-compose up -d`
+### 2. 上传证书
+
+将 Casdoor 的 JWT 证书（PEM 格式）上传到服务器，例如：
+```
+./data/jwt/jwt_cert.pem
+```
+
+### 3. 配置说明
+
+| 配置项 | 说明 |
+|--------|------|
+| JWT 公钥/证书路径 | PEM 格式的公钥或证书文件路径 |
+| JWT 存放位置 | JWT 放在 MQTT 密码或用户名字段 |
+| JWT 过期后断开连接 | JWT 过期后是否断开客户端连接 |
+| JWT 签发者 | 可选，验证 JWT 的 issuer |
+
+### 4. 客户端连接
+
+客户端连接时，将 JWT 放在密码字段（默认）：
+```
+Username: 任意
+Password: <JWT Token>
+```
 
 ## 访问地址
 
-- MQTT: mqtt://localhost:1883
-- MQTT TLS: mqtts://localhost:8883
-- HTTP API: http://localhost:6060
-- 健康检查: http://localhost:6060/api/v1/health/check
+- MQTT: mqtt://服务器IP:1883
+- MQTT TLS: mqtts://服务器IP:8883
+- WebSocket: ws://服务器IP:8083/mqtt
+- HTTP API: http://服务器IP:6060
+- 健康检查: http://服务器IP:6060/api/v1/health/check
 
 ## 配置文件
 
-配置文件位于 `./data/config/` 目录，包括：
+配置文件位于 `./data/config/` 目录：
 - `rmqtt.toml` - 主配置文件
 - `rmqtt-acl.toml` - ACL 访问控制配置
 - `rmqtt-auth.toml` - 认证配置
 
+JWT 配置文件位于 `./data/plugins/` 目录：
+- `rmqtt-auth-jwt.toml` - JWT 认证配置
+
 ## 官方文档
 
 https://github.com/rmqtt/rmqtt
+https://www.rmqttdoc.com/
