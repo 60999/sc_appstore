@@ -237,36 +237,36 @@ test_mirror_speed() {
 
 # ============================================
 # 函数：选择最快的镜像
-# 返回：最快的镜像域名
+# 输出：日志输出到stderr，返回域名到stdout
 # ============================================
 select_fastest_mirror() {
     local fastest_domain=""
     local fastest_time=99999
     
-    echo "正在检测镜像速度..."
+    echo "正在检测镜像速度..." >&2
     
     for domain in "${MIRROR_DOMAINS[@]}"; do
-        echo -n "  测试 ${domain}... "
+        echo -n "  测试 ${domain}... " >&2
         time_ms=$(test_mirror_speed "${domain}")
         
         if [ "$time_ms" -lt 99999 ]; then
-            echo "${time_ms}ms"
+            echo "${time_ms}ms" >&2
             if [ "$time_ms" -lt "$fastest_time" ]; then
                 fastest_time="$time_ms"
                 fastest_domain="$domain"
             fi
         else
-            echo "超时"
+            echo "超时" >&2
         fi
     done
     
     if [ -z "$fastest_domain" ]; then
-        echo "警告：所有镜像都不可用，尝试直接下载"
-        fastest_domain=""
+        echo "警告：所有镜像都不可用，尝试直接下载" >&2
     else
-        echo "选择最快镜像: ${fastest_domain} (${fastest_time}ms)"
+        echo "选择最快镜像: ${fastest_domain} (${fastest_time}ms)" >&2
     fi
     
+    # 只输出域名到stdout（用于变量捕获）
     echo "${fastest_domain}"
 }
 
@@ -338,8 +338,12 @@ cp -f "${EXTRACT_DIR}/data.yml" "${LOCAL_DIR}/"
 echo "清理旧版本..."
 for app in "${APPS[@]}"; do
     rm -rf "${LOCAL_DIR}/${app}"
-    rm -rf "${LOCAL_DIR}/$(echo "${app^}")"  # 首字母大写
-    rm -rf "${LOCAL_DIR}/$(echo "$app" | tr '[:lower:]' '[:upper:]')"  # 全大写
+    # 首字母大写
+    app_cap="$(echo "${app:0:1}" | tr '[:lower:]' '[:upper:]')${app:1}"
+    rm -rf "${LOCAL_DIR}/${app_cap}"
+    # 全大写
+    app_upper=$(echo "$app" | tr '[:lower:]' '[:upper:]')
+    rm -rf "${LOCAL_DIR}/${app_upper}"
 done
 
 # 安装新应用
@@ -413,8 +417,10 @@ cp -f "${TEMP_DIR}/data.yml" "${LOCAL_DIR}/"
 echo "清理旧版本..."
 for app in "${APPS[@]}"; do
     rm -rf "${LOCAL_DIR}/${app}"
-    rm -rf "${LOCAL_DIR}/$(echo "${app^}")"
-    rm -rf "${LOCAL_DIR}/$(echo "$app" | tr '[:lower:]' '[:upper:]')"
+    app_cap="$(echo "${app:0:1}" | tr '[:lower:]' '[:upper:]')${app:1}"
+    rm -rf "${LOCAL_DIR}/${app_cap}"
+    app_upper=$(echo "$app" | tr '[:lower:]' '[:upper:]')
+    rm -rf "${LOCAL_DIR}/${app_upper}"
 done
 
 # 安装新应用
