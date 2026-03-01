@@ -5,16 +5,27 @@
 这是一个适配 1Panel 商店 2.0 版本的 Docker 应用配置库。
 致力于一键运行各种 Docker 应用，无需复杂配置，享受便利和高效。
 
+## 应用列表
+
+| 应用 | 版本 | 描述 |
+|------|------|------|
+| RMQTT | 0.8.0 | 高性能分布式 MQTT 消息代理 |
+| Vikunja | 0.24.6 | 开源待办事项应用 |
+| Baserow | 1.29.3 | 无代码数据库构建平台 |
+| Spug | 3.3.3 | 轻量级自动化运维平台 |
+| Penpot | 2.3.2 | 开源设计与代码协作工具 |
+
 ## 目录结构
 
 ```
 ├── apps/                    # 应用目录
 │   └── [应用名称]/          # 具体应用
 │       ├── versions/        # 版本目录
-│       │   └── latest/      # 最新版本
+│       │   └── [版本号]/    # 具体版本（如 0.8.0）
 │       │       ├── docker-compose.yml
-│       │       └── .env.sample
-│       └── data/            # 数据持久化目录
+│       │       └── data.yml
+│       ├── data.yml         # 应用元数据
+│       └── logo.png         # 应用图标
 ├── README.md                # 项目说明
 └── LICENSE                  # 许可证
 ```
@@ -26,7 +37,7 @@
 #### 使用 git 命令获取应用
 
 ```bash
-git clone -b main https://ghp.ci/https://github.com/[你的用户名]/appstore /opt/1panel/resource/apps/local/appstore-localApps
+git clone -b main https://ghp.ci/https://github.com/60999/sc_appstore /opt/1panel/resource/apps/local/appstore-localApps
 
 cp -rf /opt/1panel/resource/apps/local/appstore-localApps/apps/* /opt/1panel/resource/apps/local/
 
@@ -36,13 +47,13 @@ rm -rf /opt/1panel/resource/apps/local/appstore-localApps
 #### 使用压缩包方式获取应用
 
 ```bash
-wget -P /opt/1panel/resource/apps/local https://ghp.ci/https://github.com/[你的用户名]/appstore/archive/refs/heads/main.zip
+wget -P /opt/1panel/resource/apps/local https://ghp.ci/https://github.com/60999/sc_appstore/archive/refs/heads/main.zip
 
 unzip -o -d /opt/1panel/resource/apps/local/ /opt/1panel/resource/apps/local/main.zip
 
-cp -rf /opt/1panel/resource/apps/local/appstore-main/apps/* /opt/1panel/resource/apps/local/
+cp -rf /opt/1panel/resource/apps/local/sc_appstore-main/apps/* /opt/1panel/resource/apps/local/
 
-rm -rf /opt/1panel/resource/apps/local/appstore-main
+rm -rf /opt/1panel/resource/apps/local/sc_appstore-main
 
 rm -rf /opt/1panel/resource/apps/local/main.zip
 ```
@@ -52,7 +63,7 @@ rm -rf /opt/1panel/resource/apps/local/main.zip
 #### 使用 git 命令获取应用
 
 ```bash
-git clone -b main https://github.com/[你的用户名]/appstore /opt/1panel/resource/apps/local/appstore-localApps
+git clone -b main https://github.com/60999/sc_appstore /opt/1panel/resource/apps/local/appstore-localApps
 
 cp -rf /opt/1panel/resource/apps/local/appstore-localApps/apps/* /opt/1panel/resource/apps/local/
 
@@ -62,42 +73,35 @@ rm -rf /opt/1panel/resource/apps/local/appstore-localApps
 #### 使用压缩包方式获取应用
 
 ```bash
-wget -P /opt/1panel/resource/apps/local https://github.com/[你的用户名]/appstore/archive/refs/heads/main.zip
+wget -P /opt/1panel/resource/apps/local https://github.com/60999/sc_appstore/archive/refs/heads/main.zip
 
 unzip -o -d /opt/1panel/resource/apps/local/ /opt/1panel/resource/apps/local/main.zip
 
-cp -rf /opt/1panel/resource/apps/local/appstore-main/apps/* /opt/1panel/resource/apps/local/
+cp -rf /opt/1panel/resource/apps/local/sc_appstore-main/apps/* /opt/1panel/resource/apps/local/
 
-rm -rf /opt/1panel/resource/apps/local/appstore-main
+rm -rf /opt/1panel/resource/apps/local/sc_appstore-main
 
 rm -rf /opt/1panel/resource/apps/local/main.zip
 ```
 
-## 手动运行应用
-
-本仓库应用支持直接 docker-compose up 运行：
-
-```bash
-# 进入应用的最新版本目录
-cd /opt/1panel/resource/apps/local/[应用名称]/versions/latest/
-
-# 复制 .env.sample 为 .env
-cp .env.sample .env
-
-# 编辑 .env 文件，修改参数
-nano .env
-
-# 启动应用
-docker-compose up -d
-```
-
 ## 添加新应用
 
-1. 在 `apps/` 目录下创建应用文件夹
-2. 创建 `versions/latest/` 目录结构
+1. 在 `apps/` 目录下创建应用文件夹（使用小写字母）
+2. 创建 `versions/[版本号]/` 目录结构
 3. 添加 `docker-compose.yml` 文件
-4. 添加 `.env.sample` 环境变量示例文件
-5. 创建 `data/` 目录用于数据持久化
+4. 添加 `data.yml` 表单配置文件
+5. 在应用根目录添加 `data.yml` 应用元数据
+6. 添加 `logo.png` 应用图标
+
+## 依赖说明
+
+| 应用 | PostgreSQL | Redis |
+|------|------------|-------|
+| RMQTT | 不需要 | 不需要 |
+| Vikunja | 必需 | 不需要 |
+| Baserow | 必需 | 不需要 |
+| Spug | 必需 | 不需要 |
+| Penpot | 必需 | 必需 |
 
 ## 免责声明
 
