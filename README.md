@@ -84,6 +84,131 @@ rm -rf /opt/1panel/resource/apps/local/sc_appstore-main
 rm -rf /opt/1panel/resource/apps/local/main.zip
 ```
 
+## 自动更新脚本
+
+可在 1Panel 计划任务中添加以下脚本，实现自动更新本仓库应用。
+
+### 国内网络脚本
+
+```bash
+#!/bin/bash
+
+# 1Panel 应用商店安全更新脚本（国内网络）
+STORE_NAME="sc_appstore"
+STORE_URL="https://ghp.ci/https://github.com/60999/sc_appstore"
+STORE_DIR="/opt/1panel/resource/apps/local/${STORE_NAME}"
+TEMP_DIR="/opt/1panel/resource/apps/local/${STORE_NAME}_temp"
+
+echo "开始更新 ${STORE_NAME} 应用商店..."
+
+# 清理临时目录
+rm -rf "${TEMP_DIR}"
+
+# 克隆最新版本
+git clone -b main "${STORE_URL}" "${TEMP_DIR}"
+
+# 检查是否克隆成功
+if [ ! -d "${TEMP_DIR}/apps" ]; then
+    echo "错误：克隆失败，请检查网络连接"
+    rm -rf "${TEMP_DIR}"
+    exit 1
+fi
+
+# 创建应用商店目录
+mkdir -p "${STORE_DIR}"
+
+# 只更新本仓库的应用（不覆盖其他应用）
+for app_dir in "${TEMP_DIR}/apps"/*; do
+    if [ -d "$app_dir" ]; then
+        app_name=$(basename "$app_dir")
+        echo "更新应用: ${app_name}"
+        rm -rf "${STORE_DIR}/${app_name}"
+        cp -rf "$app_dir" "${STORE_DIR}/"
+    fi
+done
+
+# 清理临时目录
+rm -rf "${TEMP_DIR}"
+
+echo "${STORE_NAME} 应用商店更新完成！"
+echo "请在 1Panel 应用商店中刷新本地应用。"
+```
+
+### 国际互联网络脚本
+
+```bash
+#!/bin/bash
+
+# 1Panel 应用商店安全更新脚本（国际网络）
+STORE_NAME="sc_appstore"
+STORE_URL="https://github.com/60999/sc_appstore"
+STORE_DIR="/opt/1panel/resource/apps/local/${STORE_NAME}"
+TEMP_DIR="/opt/1panel/resource/apps/local/${STORE_NAME}_temp"
+
+echo "开始更新 ${STORE_NAME} 应用商店..."
+
+# 清理临时目录
+rm -rf "${TEMP_DIR}"
+
+# 克隆最新版本
+git clone -b main "${STORE_URL}" "${TEMP_DIR}"
+
+# 检查是否克隆成功
+if [ ! -d "${TEMP_DIR}/apps" ]; then
+    echo "错误：克隆失败，请检查网络连接"
+    rm -rf "${TEMP_DIR}"
+    exit 1
+fi
+
+# 创建应用商店目录
+mkdir -p "${STORE_DIR}"
+
+# 只更新本仓库的应用（不覆盖其他应用）
+for app_dir in "${TEMP_DIR}/apps"/*; do
+    if [ -d "$app_dir" ]; then
+        app_name=$(basename "$app_dir")
+        echo "更新应用: ${app_name}"
+        rm -rf "${STORE_DIR}/${app_name}"
+        cp -rf "$app_dir" "${STORE_DIR}/"
+    fi
+done
+
+# 清理临时目录
+rm -rf "${TEMP_DIR}"
+
+echo "${STORE_NAME} 应用商店更新完成！"
+echo "请在 1Panel 应用商店中刷新本地应用。"
+```
+
+### 设置计划任务
+
+1. 登录 1Panel 面板
+2. 进入 **计划任务** 菜单
+3. 点击 **创建计划任务**
+4. 配置如下：
+   - **任务类型**：Shell 脚本
+   - **任务名称**：更新 sc_appstore 应用商店
+   - **执行周期**：选择合适的时间（如每天凌晨 3:00）
+   - **脚本内容**：粘贴上述脚本
+5. 保存并启用任务
+
+### 多应用商店共存
+
+本脚本使用独立目录存储应用，不会影响其他第三方应用商店：
+
+```
+/opt/1panel/resource/apps/local/
+├── sc_appstore/          # 本仓库的应用
+│   ├── rmqtt/
+│   ├── vikunja/
+│   └── ...
+├── okxlin_appstore/      # 其他应用商店
+│   ├── rustdesk/
+│   └── ...
+└── custom/               # 自定义应用
+    └── ...
+```
+
 ## 添加新应用
 
 1. 在 `apps/` 目录下创建应用文件夹（使用小写字母）
