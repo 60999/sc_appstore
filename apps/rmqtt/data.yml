@@ -1,0 +1,27 @@
+name: RMQTT
+tags:
+    - 消息队列
+title: 高性能分布式MQTT消息代理
+description: 高性能、可扩展、高可用的分布式MQTT消息代理，专为物联网设计
+additionalProperties:
+    key: rmqtt
+    name: RMQTT
+    tags:
+        - MQTT
+        - IoT
+        - Message Broker
+    shortDescZh: 高性能分布式MQTT消息代理
+    shortDescEn: High-performance distributed MQTT message broker
+    description:
+        en: A fully open source, highly scalable, highly available distributed MQTT messaging broker for IoT
+        zh: 高性能、可扩展、高可用的分布式MQTT消息代理，专为物联网、M2M和移动应用设计
+    type: website
+    crossVersionUpdate: false
+    limit: 0
+    recommend: 0
+    website: https://www.rmqttdoc.com/
+    github: https://github.com/rmqtt/rmqtt
+    document: https://www.rmqttdoc.com/
+    architectures:
+      - amd64
+      - arm64

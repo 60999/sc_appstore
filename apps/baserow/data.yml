@@ -1,0 +1,27 @@
+name: Baserow
+tags:
+    - 低代码
+title: 无代码数据库构建平台
+description: 使用AI构建数据库、自动化、应用和智能体的无代码平台
+additionalProperties:
+    key: baserow
+    name: Baserow
+    tags:
+        - NoCode
+        - Database
+        - AI
+    shortDescZh: 无代码数据库构建平台
+    shortDescEn: Build databases without code
+    description:
+        en: Build databases, automations, apps & agents with AI — no code
+        zh: 使用AI构建数据库、自动化、应用和智能体的无代码平台
+    type: website
+    crossVersionUpdate: false
+    limit: 0
+    recommend: 0
+    website: https://baserow.io/
+    github: https://github.com/baserow/baserow
+    document: https://baserow.io/docs/
+    architectures:
+      - amd64
+      - arm64

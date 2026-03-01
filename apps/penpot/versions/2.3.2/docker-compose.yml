@@ -1,0 +1,77 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: ${CONTAINER_NAME}-postgres
+    restart: unless-stopped
+    networks:
+      - 1panel-network
+    environment:
+      - POSTGRES_USER=${DB_USER:-penpot}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-penpot}
+      - POSTGRES_DB=${DB_NAME:-penpot}
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-penpot}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: ${CONTAINER_NAME}-redis
+    restart: unless-stopped
+    networks:
+      - 1panel-network
+    command: --save 900 1 --save 300 10 --save 60 10000
+    volumes:
+      - ./data/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  penpot-backend:
+    image: penpot/backend:2.3.2
+    container_name: ${CONTAINER_NAME}-backend
+    restart: unless-stopped
+    networks:
+      - 1panel-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - PENPOT_PUBLIC_URI=${PANEL_APP_URL:-http://localhost}
+      - PENPOT_DATABASE_URI=postgresql://${DB_USER:-penpot}:${DB_PASSWORD:-penpot}@postgres:5432/${DB_NAME:-penpot}
+      - PENPOT_REDIS_URI=redis://redis:6379/0
+      - PENPOT_FLAGS=enable-login-with-password disable-email-verification enable-preplanning
+      - PENPOT_TELEMETRY_ENABLED=false
+      - PENPOT_SECRET_KEY=${SECRET_KEY}
+    volumes:
+      - ./data/assets:/opt/data/assets
+    ports:
+      - ${PANEL_APP_PORT_BACKEND}:6060
+    labels:
+      createdBy: "Apps"
+
+  penpot-frontend:
+    image: penpot/frontend:2.3.2
+    container_name: ${CONTAINER_NAME}-frontend
+    restart: unless-stopped
+    networks:
+      - 1panel-network
+    depends_on:
+      - penpot-backend
+    environment:
+      - PENPOT_PUBLIC_URI=${PANEL_APP_URL:-http://localhost}
+    ports:
+      - ${PANEL_APP_PORT_HTTP}:80
+    labels:
+      createdBy: "Apps"
+
+networks:
+  1panel-network:
+    external: true

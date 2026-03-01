@@ -1,0 +1,31 @@
+services:
+  rmqtt:
+    image: rmqtt/rmqtt:0.8.0
+    container_name: ${CONTAINER_NAME}
+    restart: unless-stopped
+    networks:
+      - 1panel-network
+    ports:
+      - ${PANEL_APP_PORT_MQTT}:1883
+      - ${PANEL_APP_PORT_MQTTS}:8883
+      - ${PANEL_APP_PORT_HTTP}:6060
+      - ${PANEL_APP_PORT_GRPC}:5363
+      - ${PANEL_APP_PORT_RAFT}:6003
+    volumes:
+      - ./data/log:/var/log/rmqtt
+      - ./data/config:/etc/rmqtt
+    environment:
+      - TZ=${TIMEZONE:-Asia/Shanghai}
+    command: >
+      --id ${NODE_ID:-1}
+      --listen-addrs "0.0.0.0:1883"
+      --listen-addrs "0.0.0.0:8883"
+      --http-listen-addr "0.0.0.0:6060"
+      --grpc-listen-addr "0.0.0.0:5363"
+      --raft-listen-addr "0.0.0.0:6003"
+    labels:
+      createdBy: "Apps"
+
+networks:
+  1panel-network:
+    external: true

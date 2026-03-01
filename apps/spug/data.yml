@@ -1,0 +1,26 @@
+name: Spug
+tags:
+    - 运维管理
+title: 轻量级自动化运维平台
+description: 面向中小型企业设计的轻量级无Agent的自动化运维平台
+additionalProperties:
+    key: spug
+    name: Spug
+    tags:
+        - DevOps
+        - Automation
+        - Monitor
+    shortDescZh: 轻量级自动化运维平台
+    shortDescEn: Lightweight automation operations platform
+    description:
+        en: Lightweight agentless automation operations platform for small and medium enterprises
+        zh: 面向中小型企业设计的轻量级无Agent的自动化运维平台，整合了主机管理、批量执行、在线终端、文件管理、发布部署、任务计划、配置中心、监控、报警等功能
+    type: website
+    crossVersionUpdate: false
+    limit: 0
+    recommend: 0
+    website: https://ops.spug.cc/
+    github: https://github.com/openspug/spug
+    document: https://ops.spug.cc/docs/about-spug/
+    architectures:
+      - amd64

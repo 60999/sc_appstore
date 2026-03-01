@@ -1,0 +1,27 @@
+name: Penpot
+tags:
+    - 设计工具
+title: 开源设计与代码协作工具
+description: 首个开源的设计与代码协作工具，设计师和开发者可以无缝协作
+additionalProperties:
+    key: penpot
+    name: Penpot
+    tags:
+        - Design
+        - Collaboration
+        - Prototype
+    shortDescZh: 开源设计与代码协作工具
+    shortDescEn: Open-source design and code collaboration tool
+    description:
+        en: The open-source design tool for design and code collaboration
+        zh: 首个开源的设计与代码协作工具，设计师和开发者可以无缝协作
+    type: website
+    crossVersionUpdate: false
+    limit: 0
+    recommend: 0
+    website: https://penpot.app/
+    github: https://github.com/penpot/penpot
+    document: https://penpot.app/docs/
+    architectures:
+      - amd64
+      - arm64

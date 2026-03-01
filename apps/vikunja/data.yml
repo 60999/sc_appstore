@@ -1,0 +1,27 @@
+name: Vikunja
+tags:
+    - 项目管理
+title: 开源待办事项应用
+description: 开源的待办事项应用，帮助你组织生活和工作
+additionalProperties:
+    key: vikunja
+    name: Vikunja
+    tags:
+        - Task
+        - Todo
+        - Project
+    shortDescZh: 开源待办事项应用
+    shortDescEn: Open-source to-do app
+    description:
+        en: The to-do app to organize your life
+        zh: 开源的待办事项应用，帮助你组织生活和工作
+    type: website
+    crossVersionUpdate: false
+    limit: 0
+    recommend: 0
+    website: https://vikunja.io/
+    github: https://github.com/go-vikunja/vikunja
+    document: https://vikunja.io/docs/
+    architectures:
+      - amd64
+      - arm64
