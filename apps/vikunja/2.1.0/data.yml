@@ -104,8 +104,11 @@ additionalProperties:
     - default: ""
       edit: true
       envKey: PANEL_APP_URL
-      labelEn: Application URL
-      labelZh: 应用访问地址
+      labelEn: Application URL (Must be user-accessible address, not localhost/127.0.0.1)
+      labelZh: 应用访问地址（必填，用户实际访问的域名，禁止使用 localhost/127.0.0.1）
       required: true
       rule: paramHttp
       type: text
+      values:
+        - label: 请填写用户访问的完整URL，如 https://vikunja.example.com
+          value: ""
