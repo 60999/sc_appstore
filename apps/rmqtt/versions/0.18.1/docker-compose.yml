@@ -1,6 +1,6 @@
 services:
   rmqtt:
-    image: rmqtt/rmqtt:0.8.0
+    image: rmqtt/rmqtt:0.18.1
     container_name: ${CONTAINER_NAME}
     restart: unless-stopped
     networks:
