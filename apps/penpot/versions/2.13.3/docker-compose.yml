@@ -20,7 +20,7 @@ services:
       createdBy: "Apps"
 
   penpot-backend:
-    image: penpot/backend:2.3.2
+    image: penpot/backend:2.13.3
     container_name: ${CONTAINER_NAME}-backend
     restart: unless-stopped
     networks:
@@ -43,7 +43,7 @@ services:
       createdBy: "Apps"
 
   penpot-frontend:
-    image: penpot/frontend:2.3.2
+    image: penpot/frontend:2.13.3
     container_name: ${CONTAINER_NAME}-frontend
     restart: unless-stopped
     networks:
