@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: ${CONTAINER_NAME:-penpot}-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${DB_USER:-penpot}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-penpot}
+      - POSTGRES_DB=${DB_NAME:-penpot}
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    networks:
+      - penpot-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-penpot}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: ${CONTAINER_NAME:-penpot}-redis
+    restart: unless-stopped
+    command: --save 900 1 --save 300 10 --save 60 10000
+    volumes:
+      - ./data/redis:/data
+    networks:
+      - penpot-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  penpot-backend:
+    image: penpot/backend:latest
+    container_name: ${CONTAINER_NAME:-penpot}-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - PENPOT_PUBLIC_URI=${PUBLIC_URI:-http://localhost}
+      - PENPOT_DATABASE_URI=postgresql://${DB_USER:-penpot}:${DB_PASSWORD:-penpot}@postgres:5432/${DB_NAME:-penpot}
+      - PENPOT_REDIS_URI=redis://redis:6379/0
+      - PENPOT_FLAGS=enable-login-with-password disable-email-verification enable-preplanning
+      - PENPOT_TELEMETRY_ENABLED=${TELEMETRY_ENABLED:-false}
+      - PENPOT_SMTP_ENABLED=${SMTP_ENABLED:-false}
+      - PENPOT_SMTP_HOST=${SMTP_HOST}
+      - PENPOT_SMTP_PORT=${SMTP_PORT:-587}
+      - PENPOT_SMTP_USER=${SMTP_USER}
+      - PENPOT_SMTP_PASSWORD=${SMTP_PASSWORD}
+      - PENPOT_SMTP_TLS=${SMTP_TLS:-true}
+      - PENPOT_SMTP_FROM=${SMTP_FROM}
+      - PENPOT_STORAGE_BACKEND=${STORAGE_BACKEND:-assets-db}
+      - PENPOT_STORAGE_ASSETS_FS_DIRECTORY=/opt/data/assets
+      - PENPOT_STORAGE_ASSETS_FS_URI=${ASSETS_URI:-/assets}
+      - PENPOT_EXPORTER_ALLOW_LOCAL_HOSTS=${ALLOW_LOCAL_HOSTS:-false}
+      - PENPOT_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - PENPOT_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - PENPOT_GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+      - PENPOT_GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+      - PENPOT_GITLAB_CLIENT_ID=${GITLAB_CLIENT_ID}
+      - PENPOT_GITLAB_CLIENT_SECRET=${GITLAB_CLIENT_SECRET}
+    volumes:
+      - ./data/assets:/opt/data/assets
+    networks:
+      - penpot-network
+    ports:
+      - "${BACKEND_PORT:-6060}:6060"
+
+  penpot-frontend:
+    image: penpot/frontend:latest
+    container_name: ${CONTAINER_NAME:-penpot}-frontend
+    restart: unless-stopped
+    depends_on:
+      - penpot-backend
+    environment:
+      - PENPOT_PUBLIC_URI=${PUBLIC_URI:-http://localhost}
+    networks:
+      - penpot-network
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+
+networks:
+  penpot-network:
+    driver: bridge
