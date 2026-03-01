@@ -259,12 +259,26 @@ fi
 # 复制商店元数据文件
 cp -f "${LOCAL_DIR}/sc_appstore-main/data.yml" "${LOCAL_DIR}/"
 
+# 定义本仓库包含的应用列表（小写）
+APPS=("baserow" "penpot" "rmqtt" "spug" "vikunja")
+
+# 清理旧的应用目录（包括可能存在的大写目录）
+for app in "${APPS[@]}"; do
+    # 删除小写目录
+    rm -rf "${LOCAL_DIR}/${app}"
+    # 删除首字母大写目录（旧版本可能存在）
+    app_cap="$(echo ${app:0:1} | tr '[:lower:]' '[:upper:]')${app:1}"
+    rm -rf "${LOCAL_DIR}/${app_cap}"
+    # 删除全大写目录
+    app_upper=$(echo "$app" | tr '[:lower:]' '[:upper:]')
+    rm -rf "${LOCAL_DIR}/${app_upper}"
+done
+
 # 更新所有应用
 for app_dir in "${LOCAL_DIR}/sc_appstore-main/apps"/*; do
     if [ -d "$app_dir" ]; then
         app_name=$(basename "$app_dir")
         echo "更新应用: ${app_name}"
-        rm -rf "${LOCAL_DIR}/${app_name}"
         cp -rf "$app_dir" "${LOCAL_DIR}/"
     fi
 done
