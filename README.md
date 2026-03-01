@@ -88,18 +88,20 @@ rm -rf /opt/1panel/resource/apps/local/main.zip
 
 可在 1Panel 计划任务中添加以下脚本，实现自动更新本仓库应用。
 
+**注意**：本脚本会将应用直接部署到 1Panel 本地应用目录，与其他本地应用共存。
+
 ### 国内网络脚本
 
 ```bash
 #!/bin/bash
 
-# 1Panel 应用商店安全更新脚本（国内网络）
-STORE_NAME="sc_appstore"
+# 1Panel 应用商店更新脚本（国内网络）
+# 将应用直接部署到 /opt/1panel/resource/apps/local/ 目录
 STORE_URL="https://ghp.ci/https://github.com/60999/sc_appstore"
-STORE_DIR="/opt/1panel/resource/apps/local/${STORE_NAME}"
-TEMP_DIR="/opt/1panel/resource/apps/local/${STORE_NAME}_temp"
+LOCAL_DIR="/opt/1panel/resource/apps/local"
+TEMP_DIR="${LOCAL_DIR}/sc_appstore_temp"
 
-echo "开始更新 ${STORE_NAME} 应用商店..."
+echo "开始更新 sc_appstore 应用商店..."
 
 # 清理临时目录
 rm -rf "${TEMP_DIR}"
@@ -114,23 +116,23 @@ if [ ! -d "${TEMP_DIR}/apps" ]; then
     exit 1
 fi
 
-# 创建应用商店目录
-mkdir -p "${STORE_DIR}"
+# 复制商店元数据文件到 local 目录
+cp -f "${TEMP_DIR}/data.yml" "${LOCAL_DIR}/"
 
-# 只更新本仓库的应用（不覆盖其他应用）
+# 更新所有应用到 local 目录
 for app_dir in "${TEMP_DIR}/apps"/*; do
     if [ -d "$app_dir" ]; then
         app_name=$(basename "$app_dir")
         echo "更新应用: ${app_name}"
-        rm -rf "${STORE_DIR}/${app_name}"
-        cp -rf "$app_dir" "${STORE_DIR}/"
+        rm -rf "${LOCAL_DIR}/${app_name}"
+        cp -rf "$app_dir" "${LOCAL_DIR}/"
     fi
 done
 
 # 清理临时目录
 rm -rf "${TEMP_DIR}"
 
-echo "${STORE_NAME} 应用商店更新完成！"
+echo "sc_appstore 应用商店更新完成！"
 echo "请在 1Panel 应用商店中刷新本地应用。"
 ```
 
@@ -139,13 +141,13 @@ echo "请在 1Panel 应用商店中刷新本地应用。"
 ```bash
 #!/bin/bash
 
-# 1Panel 应用商店安全更新脚本（国际网络）
-STORE_NAME="sc_appstore"
+# 1Panel 应用商店更新脚本（国际网络）
+# 将应用直接部署到 /opt/1panel/resource/apps/local/ 目录
 STORE_URL="https://github.com/60999/sc_appstore"
-STORE_DIR="/opt/1panel/resource/apps/local/${STORE_NAME}"
-TEMP_DIR="/opt/1panel/resource/apps/local/${STORE_NAME}_temp"
+LOCAL_DIR="/opt/1panel/resource/apps/local"
+TEMP_DIR="${LOCAL_DIR}/sc_appstore_temp"
 
-echo "开始更新 ${STORE_NAME} 应用商店..."
+echo "开始更新 sc_appstore 应用商店..."
 
 # 清理临时目录
 rm -rf "${TEMP_DIR}"
@@ -160,23 +162,23 @@ if [ ! -d "${TEMP_DIR}/apps" ]; then
     exit 1
 fi
 
-# 创建应用商店目录
-mkdir -p "${STORE_DIR}"
+# 复制商店元数据文件到 local 目录
+cp -f "${TEMP_DIR}/data.yml" "${LOCAL_DIR}/"
 
-# 只更新本仓库的应用（不覆盖其他应用）
+# 更新所有应用到 local 目录
 for app_dir in "${TEMP_DIR}/apps"/*; do
     if [ -d "$app_dir" ]; then
         app_name=$(basename "$app_dir")
         echo "更新应用: ${app_name}"
-        rm -rf "${STORE_DIR}/${app_name}"
-        cp -rf "$app_dir" "${STORE_DIR}/"
+        rm -rf "${LOCAL_DIR}/${app_name}"
+        cp -rf "$app_dir" "${LOCAL_DIR}/"
     fi
 done
 
 # 清理临时目录
 rm -rf "${TEMP_DIR}"
 
-echo "${STORE_NAME} 应用商店更新完成！"
+echo "sc_appstore 应用商店更新完成！"
 echo "请在 1Panel 应用商店中刷新本地应用。"
 ```
 
@@ -192,22 +194,22 @@ echo "请在 1Panel 应用商店中刷新本地应用。"
    - **脚本内容**：粘贴上述脚本
 5. 保存并启用任务
 
-### 多应用商店共存
+### 目录结构
 
-本脚本使用独立目录存储应用，不会影响其他第三方应用商店：
+更新后的目录结构：
 
 ```
 /opt/1panel/resource/apps/local/
-├── sc_appstore/          # 本仓库的应用
-│   ├── rmqtt/
-│   ├── vikunja/
-│   └── ...
-├── okxlin_appstore/      # 其他应用商店
-│   ├── rustdesk/
-│   └── ...
-└── custom/               # 自定义应用
-    └── ...
+├── data.yml              # 本地应用商店元数据
+├── rmqtt/                # RMQTT 应用
+├── vikunja/              # Vikunja 应用
+├── baserow/              # Baserow 应用
+├── spug/                 # Spug 应用
+├── penpot/               # Penpot 应用
+└── (其他应用)/           # 其他本地应用
 ```
+
+**注意**：如果服务器上已有其他第三方应用，本脚本只会更新本仓库包含的应用（rmqtt、vikunja、baserow、spug、penpot），不会影响其他应用。
 
 ## 添加新应用
 
