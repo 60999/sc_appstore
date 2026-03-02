@@ -62,6 +62,39 @@ data/
    docker restart <容器名>
    ```
 
+### JWT 签名验证方式
+
+RMQTT 支持两种 JWT 签名验证方式：
+
+#### 1. RSA 公钥验证（默认，推荐）
+
+```toml
+encrypt = "public-key"
+public_key = "/app/rmqtt/data/jwt_cert.pem"
+hmac_base64 = ""  # 不需要，留空即可
+```
+
+- 使用 RSA 公钥验证 JWT 签名
+- 适合 Casdoor 等使用 RSA 证书的系统
+- 更安全，公钥可以公开
+
+#### 2. HMAC 对称密钥验证
+
+```toml
+encrypt = "hmac"
+hmac_base64 = "your-base64-encoded-secret"  # 必须填写
+public_key = ""  # 不需要
+```
+
+- 使用共享密钥验证 JWT 签名
+- 密钥需要 Base64 编码
+- 适合简单场景，但密钥需要保密
+
+| 加密方式 | encrypt 值 | 需要的字段 |
+|---------|-----------|-----------|
+| RSA 公钥 | `public-key` | `public_key` + `hmac_base64=""` |
+| HMAC | `hmac` | `hmac_base64` (必填) |
+
 ## 安全配置
 
 ### 禁止匿名访问
