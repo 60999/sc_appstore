@@ -130,7 +130,8 @@ Penpot 镜像托管在 `ghcr.io/penpot/backend` 和 `ghcr.io/penpot/frontend`，
 **其他注意事项**：
 - Spug GitHub 最新版是 v3.3.3，但 Docker Hub 只有 3.3.2
 - RMQTT GitHub 最新版是 0.18.1，但 Docker Hub 只有 0.18.0
-- 如果 Docker Hub 镜像拉取慢，可以使用加速镜像源：`docker.m.daocloud.io`
+- **Penpot 镜像托管在 ghcr.io，直接拉取会返回 denied，必须使用加速镜像源**
+- 如果 Docker Hub 镜像拉取慢，也可以使用加速镜像源：`docker.m.daocloud.io`（仅对 docker.io 生效）
 
 ### 步骤 2：上传到服务器
 
