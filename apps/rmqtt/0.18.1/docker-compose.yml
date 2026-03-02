@@ -6,10 +6,10 @@ services:
     networks:
       - 1panel-network
     ports:
-      - ${PANEL_APP_PORT_MQTT}:1883
-      - ${PANEL_APP_PORT_MQTTS}:8883
-      - ${PANEL_APP_PORT_HTTP}:6060
-      - ${PANEL_APP_PORT_WS}:8083
+      - "0.0.0.0:${PANEL_APP_PORT_MQTT}:1883"
+      - "0.0.0.0:${PANEL_APP_PORT_MQTTS}:8883"
+      - "0.0.0.0:${PANEL_APP_PORT_HTTP}:6060"
+      - "0.0.0.0:${PANEL_APP_PORT_WS}:8083"
     volumes:
       - ./data/log:/var/log/rmqtt
       - ./data/jwt:/app/rmqtt/data/jwt
