@@ -15,6 +15,7 @@ echo "$RMQTT_JWT_CONFIG" > "$CONFIG_DIR/rmqtt-auth-jwt.toml"
 
 if [ -n "$JWT_PUBLIC_KEY_PEM" ]; then
     echo "$JWT_PUBLIC_KEY_PEM" > "$JWT_DIR/jwt_cert.pem"
+    chmod 644 "$JWT_DIR/jwt_cert.pem"
 fi
 
 exec "$@"
