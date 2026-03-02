@@ -26,8 +26,8 @@ services:
       - JWT_CERT_PEM=${JWT_CERT_PEM}
       - JWT_ISSUER=${JWT_ISSUER}
       - JWT_AUDIENCE=${JWT_AUDIENCE}
-    command:
-      - sh
+    entrypoint:
+      - /bin/sh
       - -c
       - |
         DATA_DIR="/app/rmqtt/data"
@@ -45,7 +45,7 @@ services:
           sed -i "s|## validate_claims.aud = .*|validate_claims.aud = [\"$JWT_AUDIENCE\"]|g" "$JWT_CONFIG"
         fi
 
-        exec /app/rmqtt/rmqtt-bin/rmqttd "$$@"
+        exec /app/rmqtt/rmqtt-bin/rmqttd
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:6060/api/v1/brokers"]
       interval: 30s
