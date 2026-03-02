@@ -14,10 +14,10 @@ services:
       - "0.0.0.0:${PANEL_APP_PORT_RAFT}:6003"
       - "0.0.0.0:${PANEL_APP_PORT_INTERNAL}:11883"
     volumes:
-      - ./data/rmqtt.toml:/app/rmqtt/rmqtt.toml:ro
-      - ./data/rmqtt-plugins/rmqtt-auth-jwt.toml:/app/rmqtt/rmqtt-plugins/rmqtt-auth-jwt.toml:ro
-      - ./data/rmqtt-plugins/rmqtt-acl.toml:/app/rmqtt/rmqtt-plugins/rmqtt-acl.toml:ro
-      - ./data/rmqtt-plugins/rmqtt-retainer.toml:/app/rmqtt/rmqtt-plugins/rmqtt-retainer.toml:ro
+      - ./data/rmqtt.toml:/app/rmqtt/rmqtt.toml
+      - ./data/rmqtt-plugins/rmqtt-auth-jwt.toml:/app/rmqtt/rmqtt-plugins/rmqtt-auth-jwt.toml
+      - ./data/rmqtt-plugins/rmqtt-acl.toml:/app/rmqtt/rmqtt-plugins/rmqtt-acl.toml
+      - ./data/rmqtt-plugins/rmqtt-retainer.toml:/app/rmqtt/rmqtt-plugins/rmqtt-retainer.toml
       - ./data/jwt_cert.pem:/app/rmqtt/data/jwt_cert.pem
       - ./data/log:/var/log/rmqtt
       - ./data/cache:/var/log/rmqtt/.cache
@@ -32,11 +32,15 @@ services:
       - |
         DATA_DIR="/app/rmqtt/data"
         JWT_CONFIG="/app/rmqtt/rmqtt-plugins/rmqtt-auth-jwt.toml"
+        MAIN_CONFIG="/app/rmqtt/rmqtt.toml"
         JWT_CERT_FILE="$DATA_DIR/jwt_cert.pem"
 
         if [ -n "$JWT_CERT_PEM" ]; then
           echo "$JWT_CERT_PEM" > "$JWT_CERT_FILE"
           echo "JWT certificate written from environment variable"
+          
+          sed -i 's/plugins.default_startups = \[/plugins.default_startups = [\n    "rmqtt-auth-jwt",/' "$MAIN_CONFIG"
+          echo "JWT auth plugin enabled"
         fi
 
         if [ -n "$JWT_ISSUER" ]; then
