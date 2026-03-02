@@ -126,3 +126,84 @@ additionalProperties:
       labelZh: 时区
       required: false
       type: text
+    - default: 1
+      edit: true
+      envKey: NODE_ID
+      labelEn: Node ID
+      labelZh: 节点 ID
+      label:
+        en: Node ID
+        ja: ノードID
+        ms: ID Nod
+        pt-br: ID do Nó
+        ru: ID узла
+        ko: 노드 ID
+        zh: 节点 ID
+        zh-Hant: 節點 ID
+      required: true
+      type: number
+    - default: ""
+      edit: true
+      envKey: NODE_COOKIE
+      labelEn: Node Cookie (Secret)
+      labelZh: 节点 Cookie（密钥）
+      label:
+        en: Node Cookie (Secret)
+        ja: ノードクッキー（秘密）
+        ms: Cookie Nod (Rahsia)
+        pt-br: Cookie do Nó (Segredo)
+        ru: Cookie узла (Секрет)
+        ko: 노드 쿠키 (비밀)
+        zh: 节点 Cookie（密钥）
+        zh-Hant: 節點 Cookie（密鑰）
+      random: true
+      required: true
+      type: text
+    - default: ""
+      edit: true
+      envKey: JWT_CERT_PEM
+      labelEn: JWT Certificate (PEM) - Paste Casdoor app certificate
+      labelZh: JWT 证书（PEM）- 粘贴 Casdoor 应用证书
+      label:
+        en: JWT Certificate (PEM) - Paste Casdoor app certificate
+        ja: JWT証明書（PEM）- Casdoorアプリ証明書を貼り付け
+        ms: Sijil JWT (PEM) - Tampal sijil aplikasi Casdoor
+        pt-br: Certificado JWT (PEM) - Cole o certificado do aplicativo Casdoor
+        ru: Сертификат JWT (PEM) - Вставьте сертификат приложения Casdoor
+        ko: JWT 인증서 (PEM) - Casdoor 앱 인증서 붙여넣기
+        zh: JWT 证书（PEM）- 粘贴 Casdoor 应用证书
+        zh-Hant: JWT 憑證（PEM）- 貼上 Casdoor 應用憑證
+      required: true
+      type: text
+    - default: ""
+      edit: true
+      envKey: JWT_ISSUER
+      labelEn: JWT Issuer (Casdoor URL)
+      labelZh: JWT 签发者（Casdoor 地址）
+      label:
+        en: JWT Issuer (Casdoor URL)
+        ja: JWT発行者（Casdoor URL）
+        ms: Pengeluar JWT (URL Casdoor)
+        pt-br: Emissor JWT (URL do Casdoor)
+        ru: Издатель JWT (URL Casdoor)
+        ko: JWT 발급자 (Casdoor URL)
+        zh: JWT 签发者（Casdoor 地址）
+        zh-Hant: JWT 簽發者（Casdoor 位址）
+      required: false
+      type: text
+    - default: ""
+      edit: true
+      envKey: JWT_AUDIENCE
+      labelEn: JWT Audience (Casdoor Client ID)
+      labelZh: JWT 受众（Casdoor Client ID）
+      label:
+        en: JWT Audience (Casdoor Client ID)
+        ja: JWTオーディエンス（CasdoorクライアントID）
+        ms: Audiens JWT (ID Pelanggan Casdoor)
+        pt-br: Audiência JWT (Client ID do Casdoor)
+        ru: Аудитория JWT (Client ID Casdoor)
+        ko: JWT 수신자 (Casdoor 클라이언트 ID)
+        zh: JWT 受众（Casdoor Client ID）
+        zh-Hant: JWT 受眾（Casdoor Client ID）
+      required: false
+      type: text

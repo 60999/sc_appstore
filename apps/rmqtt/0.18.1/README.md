@@ -36,38 +36,31 @@ data/
 
 ## JWT 认证配置
 
-### 1. 获取 Casdoor 证书
+### 方式一：安装时配置（推荐）
 
-1. 登录 Casdoor 管理后台
-2. 进入应用详情页
-3. 复制证书内容（PEM 格式）
+在 1Panel 安装应用时填写：
+- **JWT 证书（PEM）**：粘贴 Casdoor 应用的证书内容
+- **JWT 签发者**：Casdoor 服务地址（如 `https://casdoor.example.com`）
+- **JWT 受众**：Casdoor 应用的 Client ID
 
-### 2. 配置证书
+### 方式二：安装后手动配置
 
-将 Casdoor 应用的证书内容粘贴到 `data/jwt_cert.pem` 文件：
+1. **配置 JWT 证书**
+   ```bash
+   nano /opt/1panel/apps/local/rmqtt/rmqtt/data/jwt_cert.pem
+   # 粘贴 Casdoor 应用证书
+   ```
 
-```bash
-# 在服务器上编辑证书文件
-nano /opt/1panel/apps/local/rmqtt/rmqtt/data/jwt_cert.pem
-```
+2. **修改 JWT 认证配置**（可选）
+   ```bash
+   nano /opt/1panel/apps/local/rmqtt/rmqtt/data/rmqtt-plugins/rmqtt-auth-jwt.toml
+   # 取消注释并修改 validate_claims.iss 和 validate_claims.aud
+   ```
 
-### 3. 修改 JWT 认证配置
-
-编辑 `data/rmqtt-plugins/rmqtt-auth-jwt.toml`：
-
-```toml
-# 修改签发者验证（可选）
-validate_claims.iss = ["https://your-casdoor-domain"]
-
-# 修改受众验证（可选）
-validate_claims.aud = ["your-client-id"]
-```
-
-### 4. 重启容器
-
-```bash
-docker restart <容器名>
-```
+3. **重启容器**
+   ```bash
+   docker restart <容器名>
+   ```
 
 ## 安全配置
 

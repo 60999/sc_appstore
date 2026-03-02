@@ -1,9 +1,12 @@
 ##--------------------------------------------------------------------
 ## rmqtt-auth-jwt - Casdoor JWT 认证 (RSA)
 ## 
-## 配置说明:
-## 1. 将 Casdoor 应用的证书内容粘贴到 jwt_cert.pem 文件
-## 2. 根据实际情况修改 validate_claims 配置
+## 安装后配置步骤:
+## 1. 登录 Casdoor 管理后台
+## 2. 进入应用详情页，复制证书内容（PEM 格式）
+## 3. 将证书内容粘贴到 jwt_cert.pem 文件
+## 4. 根据实际情况修改下面的 validate_claims 配置
+## 5. 重启 RMQTT 容器
 ##
 ## JWT Claims 示例 (Casdoor):
 ## {
@@ -43,30 +46,21 @@ public_key = "/app/rmqtt/data/jwt_cert.pem"
 disconnect_if_pub_rejected = true
 
 ## JWT 过期后断开连接
-## 安全建议: 启用此选项防止过期令牌持续连接
 disconnect_if_expiry = true
 
 ##--------------------------------------------------------------------
 ## JWT Claims 验证配置
-## 
-## 支持的占位符:
-## - ${username}: 用户名
-## - ${clientid}: 客户端ID
-## - ${ipaddr}: 客户端IP地址
-## - ${protocol}: MQTT协议版本 (3=3.1, 4=3.1.1, 5=5.0)
 ##--------------------------------------------------------------------
 
 ## 验证过期时间 (必须启用)
 validate_claims.exp = true
 
-## 验证签发者 (强烈建议启用)
-## 修改为你的 Casdoor 服务地址
+## 验证签发者 (可选，取消注释并修改为你的 Casdoor 服务地址)
 ## validate_claims.iss = ["https://your-casdoor-domain"]
 
-## 验证受众 (强烈建议启用)
-## 修改为你的 Casdoor 应用 client_id
+## 验证受众 (可选，取消注释并修改为你的 Casdoor 应用 client_id)
 ## validate_claims.aud = ["your-client-id"]
 
-## 验证 subject (可选)
+## 验证 subject (可选，取消注释启用)
 ## 可用于确保JWT的sub与ClientID匹配
 ## validate_claims.sub = "${clientid}"
