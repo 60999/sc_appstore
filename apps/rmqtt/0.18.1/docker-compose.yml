@@ -23,6 +23,29 @@ services:
       - ./data/cache:/var/log/rmqtt/.cache
     environment:
       - TZ=${TIMEZONE:-Asia/Shanghai}
+      - JWT_CERT_PEM=${JWT_CERT_PEM}
+      - JWT_ISSUER=${JWT_ISSUER}
+      - JWT_AUDIENCE=${JWT_AUDIENCE}
+    command:
+      - sh
+      - -c
+      - |
+        DATA_DIR="/app/rmqtt/data"
+        JWT_CONFIG="/app/rmqtt/rmqtt-plugins/rmqtt-auth-jwt.toml"
+
+        if [ -n "$JWT_CERT_PEM" ]; then
+          echo "$JWT_CERT_PEM" > "$DATA_DIR/jwt_cert.pem"
+        fi
+
+        if [ -n "$JWT_ISSUER" ]; then
+          sed -i "s|## validate_claims.iss = .*|validate_claims.iss = [\"$JWT_ISSUER\"]|g" "$JWT_CONFIG"
+        fi
+
+        if [ -n "$JWT_AUDIENCE" ]; then
+          sed -i "s|## validate_claims.aud = .*|validate_claims.aud = [\"$JWT_AUDIENCE\"]|g" "$JWT_CONFIG"
+        fi
+
+        exec /app/rmqtt/rmqtt-bin/rmqttd "$$@"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:6060/api/v1/brokers"]
       interval: 30s
