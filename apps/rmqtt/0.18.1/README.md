@@ -43,9 +43,11 @@ listener.tcp.external.allow_anonymous = false
 
 RMQTT 支持 JWT 认证。配置步骤：
 
-1. **生成 RSA 密钥对**（或从 Casdoor 获取）
-2. **填写 JWT 公钥**：在安装时填写 PEM 格式的公钥
+1. **从 Casdoor 获取证书**：在 Casdoor 应用详情页复制证书内容
+2. **填写 JWT 公钥**：在安装时将 Casdoor 应用的证书（PEM 格式）粘贴到「JWT 公钥/证书」字段
 3. **验证配置**：确保以下配置正确
+
+**注意**：只需填写 Casdoor 中应用对应的证书，即可完成 JWT 认证配置。
 
 ```toml
 # 主配置文件中

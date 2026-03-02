@@ -7,7 +7,7 @@ JWT_DIR="$DATA_DIR/jwt"
 mkdir -p "$CONFIG_DIR"
 mkdir -p "$JWT_DIR"
 
-echo "$RMQTT_CONFIG" > "$DATA_DIR/rmqtt.toml"
+echo "$RMQTT_CONFIG" > "/app/rmqtt/rmqtt.toml"
 
 echo "$RMQTT_ACL_CONFIG" > "$CONFIG_DIR/rmqtt-acl.toml"
 
