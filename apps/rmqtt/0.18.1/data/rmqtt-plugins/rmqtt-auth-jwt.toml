@@ -23,6 +23,11 @@
 ##   "aud": "client_id"
 ## }
 ##
+## 连接参数:
+## - username: JWT 的 name 字段值
+## - clientid: JWT 的 sub 字段值
+## - password: JWT Token
+##
 ## 参考文档: https://github.com/rmqtt/rmqtt/blob/master/docs/en_US/auth-jwt.md
 ##--------------------------------------------------------------------
 
@@ -64,14 +69,18 @@ disconnect_if_expiry = true
 ## JWT Claims 验证配置
 ## 
 ## 支持的占位符:
-## - ${username}: 用户名
-## - ${clientid}: 客户端ID
+## - ${username}: MQTT 连接用户名
+## - ${clientid}: MQTT 连接客户端ID
 ## - ${ipaddr}: 客户端IP地址
 ## - ${protocol}: MQTT协议版本 (3=3.1, 4=3.1.1, 5=5.0)
 ##--------------------------------------------------------------------
 
 ## 验证过期时间 (必须启用)
 validate_claims.exp = true
+
+## 验证用户名 (必须启用)
+## 确保 MQTT 用户名与 JWT 的 name 字段匹配
+validate_claims.name = "${username}"
 
 ## 验证签发者 (强烈建议启用)
 ## 取消注释并修改为你的 Casdoor 服务地址
@@ -82,7 +91,5 @@ validate_claims.exp = true
 ## validate_claims.aud = ["your-client-id"]
 
 ## 验证 subject (可选)
-## 可用于确保JWT的sub与ClientID匹配
-## 格式: validate_claims.sub = "${clientid}"
-## 这要求设备连接时的ClientID必须与JWT的sub字段一致
-#validate_claims.sub = "${clientid}"
+## 可用于确保 JWT 的 sub 字段与 ClientID 匹配
+## validate_claims.sub = "${clientid}"
