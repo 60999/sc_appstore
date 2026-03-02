@@ -18,7 +18,7 @@ services:
       - ./data/rmqtt-plugins/rmqtt-auth-jwt.toml:/app/rmqtt/rmqtt-plugins/rmqtt-auth-jwt.toml:ro
       - ./data/rmqtt-plugins/rmqtt-acl.toml:/app/rmqtt/rmqtt-plugins/rmqtt-acl.toml:ro
       - ./data/rmqtt-plugins/rmqtt-retainer.toml:/app/rmqtt/rmqtt-plugins/rmqtt-retainer.toml:ro
-      - ./data/jwt_cert.pem:/app/rmqtt/data/jwt_cert.pem:ro
+      - ./data/jwt_cert.pem:/app/rmqtt/data/jwt_cert.pem
       - ./data/log:/var/log/rmqtt
       - ./data/cache:/var/log/rmqtt/.cache
     environment:
@@ -32,9 +32,11 @@ services:
       - |
         DATA_DIR="/app/rmqtt/data"
         JWT_CONFIG="/app/rmqtt/rmqtt-plugins/rmqtt-auth-jwt.toml"
+        JWT_CERT_FILE="$DATA_DIR/jwt_cert.pem"
 
         if [ -n "$JWT_CERT_PEM" ]; then
-          echo "$JWT_CERT_PEM" > "$DATA_DIR/jwt_cert.pem"
+          echo "$JWT_CERT_PEM" > "$JWT_CERT_FILE"
+          echo "JWT certificate written from environment variable"
         fi
 
         if [ -n "$JWT_ISSUER" ]; then
