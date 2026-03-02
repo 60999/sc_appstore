@@ -101,3 +101,36 @@ additionalProperties:
       random: true
       required: true
       type: password
+    - default: admin
+      edit: true
+      envKey: SPUG_ADMIN_USER
+      labelEn: Admin Username
+      labelZh: 管理员用户名
+      label:
+        en: Admin Username
+        ja: 管理者ユーザー名
+        ms: Nama Pengguna Admin
+        pt-br: Nome de Usuário Admin
+        ru: Имя пользователя администратора
+        ko: 관리자 사용자 이름
+        zh: 管理员用户名
+        zh-Hant: 管理員用戶名
+      required: true
+      rule: paramCommon
+      type: text
+    - default: ""
+      envKey: SPUG_ADMIN_PASSWORD
+      labelEn: Admin Password
+      labelZh: 管理员密码
+      label:
+        en: Admin Password
+        ja: 管理者パスワード
+        ms: Kata Laluan Admin
+        pt-br: Senha Admin
+        ru: Пароль администратора
+        ko: 관리자 비밀번호
+        zh: 管理员密码
+        zh-Hant: 管理員密碼
+      random: true
+      required: true
+      type: password

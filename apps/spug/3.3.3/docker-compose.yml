@@ -13,10 +13,13 @@ services:
       - DATABASE_PASSWORD=${PANEL_DB_USER_PASSWORD}
       - DATABASE_TYPE=${PANEL_DB_TYPE}
       - SECRET_KEY=${SECRET_KEY}
+      - SPUG_ADMIN_USER=${SPUG_ADMIN_USER}
+      - SPUG_ADMIN_PASSWORD=${SPUG_ADMIN_PASSWORD}
     ports:
       - ${PANEL_APP_PORT_HTTP}:80
     volumes:
       - ./data/spug:/data
+      - ./init_spug.sh:/docker-entrypoint.d/init_spug.sh:ro
     labels:
       createdBy: "Apps"
 
