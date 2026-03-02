@@ -27,3 +27,8 @@ docker exec 1Panel-localspug-xxx init_spug admin Admin@123
 - MySQL
 - MariaDB
 - PostgreSQL
+
+## 官方文档
+
+- https://ops.spug.cc/docs/about-spug/
+- https://github.com/openspug/spug
