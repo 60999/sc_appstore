@@ -93,17 +93,17 @@ rm -rf /opt/1panel/resource/apps/local/main.zip
 在有网络的机器上下载镜像并导出：
 
 ```bash
-# 拉取镜像（Penpot 必须使用加速镜像源，其他镜像可选）
-docker pull docker.1ms.run/ghcr.io/penpot/backend:2.13.3
-docker pull docker.1ms.run/ghcr.io/penpot/frontend:2.13.3
+# 拉取镜像（Penpot 使用 DaoCloud 加速源，其他镜像可选）
+docker pull ghcr.m.daocloud.io/penpot/backend:2.13.3
+docker pull ghcr.m.daocloud.io/penpot/frontend:2.13.3
 docker pull vikunja/vikunja:2.1.0
 docker pull openspug/spug:3.3.2
 docker pull baserow/baserow:2.1.3
 docker pull rmqtt/rmqtt:0.18.0
 
 # 重新标记为原始镜像名（重要！）
-docker tag docker.1ms.run/ghcr.io/penpot/backend:2.13.3 ghcr.io/penpot/backend:2.13.3
-docker tag docker.1ms.run/ghcr.io/penpot/frontend:2.13.3 ghcr.io/penpot/frontend:2.13.3
+docker tag ghcr.m.daocloud.io/penpot/backend:2.13.3 ghcr.io/penpot/backend:2.13.3
+docker tag ghcr.m.daocloud.io/penpot/frontend:2.13.3 ghcr.io/penpot/frontend:2.13.3
 
 # 导出镜像为 tar 文件（使用原始镜像名）
 docker save -o penpot-backend.tar ghcr.io/penpot/backend:2.13.3
@@ -117,8 +117,8 @@ docker save -o rmqtt.tar rmqtt/rmqtt:0.18.0
 **注意**：
 - Spug GitHub 最新版是 v3.3.3，但 Docker Hub 只有 3.3.2
 - RMQTT GitHub 最新版是 0.18.1，但 Docker Hub 只有 0.18.0
-- **Penpot 镜像托管在 ghcr.io，直接拉取会返回 denied，必须使用加速镜像源**
-- 如果 Docker Hub 镜像拉取慢，也可以使用加速镜像源：`docker.1ms.run/镜像名`
+- **Penpot 镜像托管在 ghcr.io，直接拉取会返回 denied，需使用 DaoCloud 加速源 `ghcr.m.daocloud.io`**
+- 如果 Docker Hub 镜像拉取慢，可以使用加速镜像源：`docker.m.daocloud.io`
 
 ### 步骤 2：上传到服务器
 
