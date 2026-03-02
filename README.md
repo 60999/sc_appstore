@@ -93,21 +93,37 @@ rm -rf /opt/1panel/resource/apps/local/main.zip
 在有网络的机器上下载镜像并导出：
 
 ```bash
-# 拉取镜像
+# 方法一：使用加速镜像源拉取（推荐国内用户）
 docker pull docker.1ms.run/ghcr.io/penpot/backend:2.13.3
 docker pull docker.1ms.run/ghcr.io/penpot/frontend:2.13.3
 docker pull docker.1ms.run/vikunja/vikunja:2.1.0
 docker pull docker.1ms.run/openspug/spug:3.3.3
-docker pull baserow/baserow:2.1.3
-docker pull rmqtt/rmqtt:0.18.1
+docker pull docker.1ms.run/baserow/baserow:2.1.3
+docker pull docker.1ms.run/rmqtt/rmqtt:0.18.1
 
-# 导出镜像为 tar 文件
-docker save -o penpot-backend.tar docker.1ms.run/ghcr.io/penpot/backend:2.13.3
-docker save -o penpot-frontend.tar docker.1ms.run/ghcr.io/penpot/frontend:2.13.3
-docker save -o vikunja.tar docker.1ms.run/vikunja/vikunja:2.1.0
-docker save -o spug.tar docker.1ms.run/openspug/spug:3.3.3
+# 重新标记为原始镜像名（重要！）
+docker tag docker.1ms.run/ghcr.io/penpot/backend:2.13.3 ghcr.io/penpot/backend:2.13.3
+docker tag docker.1ms.run/ghcr.io/penpot/frontend:2.13.3 ghcr.io/penpot/frontend:2.13.3
+docker tag docker.1ms.run/vikunja/vikunja:2.1.0 vikunja/vikunja:2.1.0
+docker tag docker.1ms.run/openspug/spug:3.3.3 openspug/spug:3.3.3
+docker tag docker.1ms.run/baserow/baserow:2.1.3 baserow/baserow:2.1.3
+docker tag docker.1ms.run/rmqtt/rmqtt:0.18.1 rmqtt/rmqtt:0.18.1
+
+# 导出镜像为 tar 文件（使用原始镜像名）
+docker save -o penpot-backend.tar ghcr.io/penpot/backend:2.13.3
+docker save -o penpot-frontend.tar ghcr.io/penpot/frontend:2.13.3
+docker save -o vikunja.tar vikunja/vikunja:2.1.0
+docker save -o spug.tar openspug/spug:3.3.3
 docker save -o baserow.tar baserow/baserow:2.1.3
 docker save -o rmqtt.tar rmqtt/rmqtt:0.18.1
+
+# 方法二：直接拉取原始镜像（需要代理或国际网络）
+docker pull ghcr.io/penpot/backend:2.13.3
+docker pull ghcr.io/penpot/frontend:2.13.3
+docker pull vikunja/vikunja:2.1.0
+docker pull openspug/spug:3.3.3
+docker pull baserow/baserow:2.1.3
+docker pull rmqtt/rmqtt:0.18.1
 ```
 
 ### 步骤 2：上传到服务器
@@ -131,7 +147,7 @@ docker images
 
 ### 步骤 4：在 1Panel 中安装应用
 
-镜像加载完成后，即可在 1Panel 中正常安装应用，Docker 会直接使用本地镜像，无需从网络拉取。
+镜像加载完成后，即可在 1Panel 中正常安装应用。
 
 ### 一键加载脚本
 

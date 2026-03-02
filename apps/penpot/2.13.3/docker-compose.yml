@@ -1,6 +1,6 @@
 services:
   penpot-backend:
-    image: docker.1ms.run/ghcr.io/penpot/backend:2.13.3
+    image: ghcr.io/penpot/backend:2.13.3
     container_name: ${CONTAINER_NAME}-backend
     restart: unless-stopped
     networks:
@@ -20,7 +20,7 @@ services:
       createdBy: "Apps"
 
   penpot-frontend:
-    image: docker.1ms.run/ghcr.io/penpot/frontend:2.13.3
+    image: ghcr.io/penpot/frontend:2.13.3
     container_name: ${CONTAINER_NAME}-frontend
     restart: unless-stopped
     networks:
