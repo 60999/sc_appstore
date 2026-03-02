@@ -14,46 +14,20 @@ services:
       - "0.0.0.0:${PANEL_APP_PORT_RAFT}:6003"
       - "0.0.0.0:${PANEL_APP_PORT_INTERNAL}:11883"
     volumes:
+      - ./data/rmqtt.toml:/app/rmqtt/rmqtt.toml:ro
+      - ./data/rmqtt-plugins/rmqtt-auth-jwt.toml:/app/rmqtt/rmqtt-plugins/rmqtt-auth-jwt.toml:ro
+      - ./data/rmqtt-plugins/rmqtt-acl.toml:/app/rmqtt/rmqtt-plugins/rmqtt-acl.toml:ro
+      - ./data/rmqtt-plugins/rmqtt-retainer.toml:/app/rmqtt/rmqtt-plugins/rmqtt-retainer.toml:ro
+      - ./data/jwt_cert.pem:/app/rmqtt/data/jwt_cert.pem:ro
       - ./data/log:/var/log/rmqtt
-      - ./data/jwt:/app/rmqtt/data/jwt
+      - ./data/cache:/var/log/rmqtt/.cache
     environment:
       - TZ=${TIMEZONE:-Asia/Shanghai}
-      - RMQTT_CONFIG=${RMQTT_CONFIG}
-      - RMQTT_ACL_CONFIG=${RMQTT_ACL_CONFIG}
-      - RMQTT_JWT_CONFIG=${RMQTT_JWT_CONFIG}
-      - JWT_PUBLIC_KEY_PEM=${JWT_PUBLIC_KEY_PEM}
-    command:
-      - sh
-      - -c
-      - |
-        CONFIG_DIR="/app/rmqtt/rmqtt-plugins"
-        DATA_DIR="/app/rmqtt/data"
-        JWT_DIR="$DATA_DIR/jwt"
-        CONFIG_FILE="/app/rmqtt/rmqtt.toml"
-
-        mkdir -p "$CONFIG_DIR"
-        mkdir -p "$JWT_DIR"
-
-        if [ -n "$JWT_PUBLIC_KEY_PEM" ]; then
-          echo "$JWT_PUBLIC_KEY_PEM" > "$JWT_DIR/jwt_cert.pem"
-          chmod 644 "$JWT_DIR/jwt_cert.pem"
-        fi
-
-        if [ -n "$RMQTT_ACL_CONFIG" ]; then
-          echo "$RMQTT_ACL_CONFIG" > "$CONFIG_DIR/rmqtt-acl.toml"
-        fi
-
-        if [ -n "$RMQTT_JWT_CONFIG" ]; then
-          echo "$RMQTT_JWT_CONFIG" > "$CONFIG_DIR/rmqtt-auth-jwt.toml"
-        fi
-
-        if [ -n "$RMQTT_CONFIG" ]; then
-          echo "$RMQTT_CONFIG" > "$CONFIG_FILE"
-        fi
-
-        sed -i 's/allow_anonymous = true/allow_anonymous = false/g' "$CONFIG_FILE"
-
-        exec /app/rmqtt/rmqtt-bin/rmqttd "$$@"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6060/api/v1/brokers"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     labels:
       createdBy: "Apps"
 

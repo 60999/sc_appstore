@@ -1,0 +1,72 @@
+##--------------------------------------------------------------------
+## rmqtt-auth-jwt - Casdoor JWT 认证 (RSA)
+## 
+## 配置说明:
+## 1. 将 Casdoor 应用的证书内容粘贴到 jwt_cert.pem 文件
+## 2. 根据实际情况修改 validate_claims 配置
+##
+## JWT Claims 示例 (Casdoor):
+## {
+##   "sub": "org/device001",
+##   "name": "Device 001",
+##   "organization": "your-org",
+##   "application": "your-client-id",
+##   "exp": 1234567890,
+##   "iss": "https://your-casdoor-domain",
+##   "aud": "your-client-id"
+## }
+##
+## 参考文档: https://github.com/rmqtt/rmqtt/blob/master/docs/en_US/auth-jwt.md
+##--------------------------------------------------------------------
+
+##--------------------------------------------------------------------
+## 基础配置
+##--------------------------------------------------------------------
+
+## JWT 存放位置
+## - password: JWT 放在 MQTT 密码字段 (推荐)
+## - username: JWT 放在 MQTT 用户名字段
+from = "password"
+
+## 使用公钥/证书验证 RSA 签名
+encrypt = "public-key"
+
+## 证书文件路径 (Casdoor 的 JWT 证书)
+## 支持格式: PEM 证书或公钥 (RSA/ECDSA)
+public_key = "/app/rmqtt/data/jwt_cert.pem"
+
+##--------------------------------------------------------------------
+## 连接控制配置
+##--------------------------------------------------------------------
+
+## 发布被拒绝后是否断开连接
+disconnect_if_pub_rejected = true
+
+## JWT 过期后断开连接
+## 安全建议: 启用此选项防止过期令牌持续连接
+disconnect_if_expiry = true
+
+##--------------------------------------------------------------------
+## JWT Claims 验证配置
+## 
+## 支持的占位符:
+## - ${username}: 用户名
+## - ${clientid}: 客户端ID
+## - ${ipaddr}: 客户端IP地址
+## - ${protocol}: MQTT协议版本 (3=3.1, 4=3.1.1, 5=5.0)
+##--------------------------------------------------------------------
+
+## 验证过期时间 (必须启用)
+validate_claims.exp = true
+
+## 验证签发者 (强烈建议启用)
+## 修改为你的 Casdoor 服务地址
+## validate_claims.iss = ["https://your-casdoor-domain"]
+
+## 验证受众 (强烈建议启用)
+## 修改为你的 Casdoor 应用 client_id
+## validate_claims.aud = ["your-client-id"]
+
+## 验证 subject (可选)
+## 可用于确保JWT的sub与ClientID匹配
+## validate_claims.sub = "${clientid}"

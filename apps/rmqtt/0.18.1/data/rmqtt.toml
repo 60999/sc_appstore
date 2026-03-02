@@ -1,0 +1,80 @@
+##--------------------------------------------------------------------
+## RMQTT 主配置文件
+## 
+## 认证方式: JWT认证
+## 
+## 设备连接流程:
+## 1. 设备调用Casdoor API获取JWT Token
+## 2. 设备使用JWT Token连接MQTT
+##--------------------------------------------------------------------
+
+##--------------------------------------------------------------------
+## 节点配置
+##--------------------------------------------------------------------
+node.id = 1
+node.name = "rmqtt@127.0.0.1"
+node.cookie = "rmqtt_secret_cookie"
+
+##--------------------------------------------------------------------
+## 日志配置
+##--------------------------------------------------------------------
+log.to = "both"
+log.level = "info"
+log.dir = "/var/log/rmqtt"
+log.file = "rmqtt.log"
+
+##--------------------------------------------------------------------
+## 插件配置
+##--------------------------------------------------------------------
+plugins.dir = "rmqtt-plugins/"
+
+## 默认启动的插件
+## - rmqtt-retainer: 保留消息存储
+## - rmqtt-http-api: HTTP 管理接口
+## - rmqtt-auth-jwt: JWT认证
+## - rmqtt-acl: 访问控制
+plugins.default_startups = [
+    "rmqtt-retainer",
+    "rmqtt-http-api",
+    "rmqtt-auth-jwt",
+    "rmqtt-acl"
+]
+
+##--------------------------------------------------------------------
+## TCP 监听器配置
+##--------------------------------------------------------------------
+listener.tcp.external.addr = "0.0.0.0:1883"
+listener.tcp.external.workers = 8
+listener.tcp.external.max_connections = 1024000
+listener.tcp.external.max_handshaking_limit = 500
+listener.tcp.external.handshake_timeout = "30s"
+listener.tcp.external.max_packet_size = "1MB"
+
+##--------------------------------------------------------------------
+## 安全配置
+##--------------------------------------------------------------------
+listener.tcp.external.allow_anonymous = false
+listener.tcp.external.allow_zero_keepalive = true
+listener.tcp.external.min_keepalive = 10
+listener.tcp.external.max_keepalive = 65535
+listener.tcp.external.session_expiry_interval = "2h"
+listener.tcp.external.message_retry_interval = "20s"
+listener.tcp.external.message_expiry_interval = "5m"
+listener.tcp.external.max_subscriptions = 100
+listener.tcp.external.max_topic_levels = 16
+listener.tcp.external.max_qos_allowed = 2
+listener.tcp.external.shared_subscription = true
+listener.tcp.external.max_inflight = 16
+listener.tcp.external.max_mqueue_len = 1000
+
+##--------------------------------------------------------------------
+## WebSocket 监听器配置
+##--------------------------------------------------------------------
+listener.ws.external.addr = "0.0.0.0:8083"
+listener.ws.external.max_connections = 102400
+listener.ws.external.handshake_timeout = "30s"
+
+##--------------------------------------------------------------------
+## HTTP API 配置
+##--------------------------------------------------------------------
+http_api.addr = "0.0.0.0:6060"

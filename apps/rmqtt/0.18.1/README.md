@@ -18,15 +18,56 @@ RMQTT 是一款开源、高性能、高可用的 MQTT 消息代理。
 | 6003 | Raft | 集群 Raft 共识端口 |
 | 11883 | Internal MQTT | 内部 MQTT 通信端口 |
 
-## 端口绑定配置
+## 配置文件说明
 
-**重要**：如果需要从外部访问 MQTT 服务，请确保端口绑定到 `0.0.0.0` 而不是 `127.0.0.1`。
+应用使用配置文件挂载方式，配置文件位于 `data/` 目录：
 
-在 1Panel 中：
-1. 进入 **容器** → 找到 RMQTT 容器
-2. 编辑配置
-3. 将端口绑定从 `127.0.0.1` 改为 `0.0.0.0`
-4. 保存并重启容器
+```
+data/
+├── rmqtt.toml                      # 主配置文件
+├── jwt_cert.pem                    # Casdoor JWT 证书
+├── log/                            # 日志目录
+├── cache/                          # 缓存目录
+└── rmqtt-plugins/
+    ├── rmqtt-auth-jwt.toml         # JWT 认证配置
+    ├── rmqtt-acl.toml              # ACL 访问控制
+    └── rmqtt-retainer.toml         # 保留消息配置
+```
+
+## JWT 认证配置
+
+### 1. 获取 Casdoor 证书
+
+1. 登录 Casdoor 管理后台
+2. 进入应用详情页
+3. 复制证书内容（PEM 格式）
+
+### 2. 配置证书
+
+将 Casdoor 应用的证书内容粘贴到 `data/jwt_cert.pem` 文件：
+
+```bash
+# 在服务器上编辑证书文件
+nano /opt/1panel/apps/local/rmqtt/rmqtt/data/jwt_cert.pem
+```
+
+### 3. 修改 JWT 认证配置
+
+编辑 `data/rmqtt-plugins/rmqtt-auth-jwt.toml`：
+
+```toml
+# 修改签发者验证（可选）
+validate_claims.iss = ["https://your-casdoor-domain"]
+
+# 修改受众验证（可选）
+validate_claims.aud = ["your-client-id"]
+```
+
+### 4. 重启容器
+
+```bash
+docker restart <容器名>
+```
 
 ## 安全配置
 
@@ -37,33 +78,30 @@ RMQTT 是一款开源、高性能、高可用的 MQTT 消息代理。
 listener.tcp.external.allow_anonymous = false
 ```
 
-**重要**：如果空 JWT 可以连接成功，请检查：
-1. JWT 公钥是否正确配置
-2. `rmqtt-auth-jwt` 插件是否在 `plugins.default_startups` 列表中
-3. JWT 配置文件路径是否正确
+### ACL 访问控制
 
-### JWT 认证配置
+默认 ACL 规则：
+- 管理员账号拥有完全访问权限
+- 设备只能访问自己的主题空间
+- 默认拒绝所有未明确允许的操作
 
-RMQTT 支持 JWT 认证。配置步骤：
+## 测试连接
 
-1. **从 Casdoor 获取证书**：在 Casdoor 应用详情页复制证书内容
-2. **填写 JWT 公钥**：在安装时将 Casdoor 应用的证书（PEM 格式）粘贴到「JWT 公钥/证书」字段
-3. **验证配置**：确保以下配置正确
-
-**注意**：只需填写 Casdoor 中应用对应的证书，即可完成 JWT 认证配置。
-
-### 测试连接
-
-使用 MQTT 客户端测试：
 ```bash
-# 应该失败 - 无密码
-mosquitto_pub -h localhost -p 1883 -t test -m "hello"
+# 1. 从 Casdoor 获取 JWT
+JWT_TOKEN=$(curl -s -X POST https://your-casdoor/api/login/oauth/access_token \
+  -d "grant_type=password" \
+  -d "username=device001" \
+  -d "password=device_password" \
+  -d "client_id=your_client_id" \
+  -d "client_secret=your_client_secret" | jq -r '.access_token')
 
-# 应该失败 - 空 JWT
-mosquitto_pub -h localhost -p 1883 -t test -m "hello" -u "" -P ""
-
-# 应该成功 - 有效 JWT
-mosquitto_pub -h localhost -p 1883 -t test -m "hello" -u "username" -P "your_jwt_token"
+# 2. 使用 JWT 连接 MQTT
+mosquitto_pub -h localhost -p 1883 \
+  -u "device001" \
+  -P "$JWT_TOKEN" \
+  -t "test/topic" \
+  -m "Hello from JWT auth"
 ```
 
 ## 官方文档
