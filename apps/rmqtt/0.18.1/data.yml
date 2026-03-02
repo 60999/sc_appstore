@@ -169,15 +169,15 @@ additionalProperties:
       edit: true
       envKey: JWT_PUBLIC_KEY_PEM
       labelEn: JWT Public Key/Certificate (PEM format)
-      labelZh: JWT 公钥/证书（PEM 格式）
+      labelZh: JWT 公钥/证书（PEM 格式）- 粘贴 Casdoor 应用证书即可
       label:
-        en: JWT Public Key/Certificate (PEM format)
-        ja: JWT公開鍵/証明書（PEM形式）
-        ms: Kunci Awam/Sijil JWT (format PEM)
-        pt-br: Chave Pública/Certificado JWT (formato PEM)
-        ru: Открытый ключ/сертификат JWT (формат PEM)
-        ko: JWT 공개 키/인증서 (PEM 형식)
-        zh: JWT 公钥/证书（PEM 格式）
-        zh-Hant: JWT 公鑰/憑證（PEM 格式）
+        en: JWT Public Key/Certificate (PEM format) - Paste Casdoor app certificate
+        ja: JWT公開鍵/証明書（PEM形式）- Casdoorアプリ証明書を貼り付け
+        ms: Kunci Awam/Sijil JWT (format PEM) - Tampal sijil aplikasi Casdoor
+        pt-br: Chave Pública/Certificado JWT (formato PEM) - Cole o certificado do aplicativo Casdoor
+        ru: Открытый ключ/сертификат JWT (формат PEM) - Вставьте сертификат приложения Casdoor
+        ko: JWT 공개 키/인증서 (PEM 형식) - Casdoor 앱 인증서 붙여넣기
+        zh: JWT 公钥/证书（PEM 格式）- 粘贴 Casdoor 应用证书即可
+        zh-Hant: JWT 公鑰/憑證（PEM 格式）- 貼上 Casdoor 應用憑證即可
       required: false
       type: text
