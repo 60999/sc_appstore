@@ -157,46 +157,12 @@ docker images
 
 ### 安装后配置
 
-#### Vikunja 权限问题
+各应用的安装后配置请参考对应目录下的 `README.md`：
 
-Vikunja 容器以 `uid=1000` 运行，如果遇到权限错误，请在服务器上执行：
-
-```bash
-# 查找 Vikunja 数据目录
-VIKUNJA_DATA=$(docker inspect <容器名> --format '{{ range .Mounts }}{{ if eq .Destination "/app/vikunja/files" }}{{ .Source }}{{ end }}{{ end }}')
-
-# 修复权限
-chmod -R 777 "$VIKUNJA_DATA"
-
-# 重启容器
-docker restart <容器名>
-```
-
-或者直接：
-```bash
-chmod -R 777 /opt/1panel/apps/local/vikunja/vikunja/data/vikunja
-docker restart <容器名>
-```
-
-#### Spug 初始化
-
-Spug 安装后需要初始化数据库和管理员账户：
-
-**方法一：在安装时配置（推荐）**
-
-安装时填写管理员用户名和密码，容器启动时会自动初始化。
-
-**方法二：手动初始化**
-
-```bash
-# 初始化数据库并创建管理员账户
-docker exec <容器名> init_spug <用户名> <密码>
-
-# 示例
-docker exec 1Panel-localspug-xxx init_spug admin Admin@123
-```
-
-初始化完成后，使用设置的用户名和密码登录 Spug。
+| 应用 | 配置说明 |
+|------|----------|
+| Vikunja | [apps/vikunja/2.1.0/README.md](apps/vikunja/2.1.0/README.md) - 权限问题解决 |
+| Spug | [apps/spug/3.3.3/README.md](apps/spug/3.3.3/README.md) - 管理员初始化 |
 
 ### 一键加载脚本
 
