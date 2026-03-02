@@ -1,0 +1,26 @@
+services:
+  v2raya:
+    image: mzz2017/v2raya:2.2.7.5
+    container_name: ${CONTAINER_NAME}
+    restart: unless-stopped
+    networks:
+      - 1panel-network
+    ports:
+      - "0.0.0.0:${PANEL_APP_PORT_HTTP}:2017"
+      - "0.0.0.0:${PANEL_APP_PORT_SOCKS5}:20170"
+      - "0.0.0.0:${PANEL_APP_PORT_HTTP_PROXY}:20171"
+      - "0.0.0.0:${PANEL_APP_PORT_SS}:20172"
+    volumes:
+      - ./data/v2raya:/etc/v2raya
+    environment:
+      - TZ=${TIMEZONE:-Asia/Shanghai}
+      - V2RAYA_V2RAY_BIN=${V2RAYA_V2RAY_BIN:-/usr/local/bin/xray}
+      - V2RAYA_NFTABLES_SUPPORT=${V2RAYA_NFTABLES_SUPPORT:-off}
+      - IPTABLES_MODE=${IPTABLES_MODE:-legacy}
+      - V2RAYA_LOG_FILE=/tmp/v2raya.log
+    labels:
+      createdBy: "Apps"
+
+networks:
+  1panel-network:
+    external: true

@@ -24,4 +24,4 @@ recommend: 0
 website: https://v2raya.org/
 document: https://v2raya.org/docs/
 sources:
-  - docker: mzz2017/v2raya:2.2.5.1
+  - docker: mzz2017/v2raya:2.2.7.5

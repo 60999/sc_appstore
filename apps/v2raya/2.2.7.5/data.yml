@@ -1,0 +1,125 @@
+additionalProperties:
+  formFields:
+    - default: 2017
+      edit: true
+      envKey: PANEL_APP_PORT_HTTP
+      labelEn: Web UI Port
+      labelZh: Web 界面端口
+      label:
+        en: Web UI Port
+        ja: Web UI ポート
+        ms: Port UI Web
+        pt-br: Porta da Interface Web
+        ru: Порт веб-интерфейса
+        ko: 웹 UI 포트
+        zh: Web 界面端口
+        zh-Hant: Web 界面埠
+      required: true
+      rule: paramPort
+      type: number
+    - default: 20170
+      edit: true
+      envKey: PANEL_APP_PORT_SOCKS5
+      labelEn: SOCKS5 Port
+      labelZh: SOCKS5 端口
+      label:
+        en: SOCKS5 Port
+        ja: SOCKS5 ポート
+        ms: Port SOCKS5
+        pt-br: Porta SOCKS5
+        ru: Порт SOCKS5
+        ko: SOCKS5 포트
+        zh: SOCKS5 端口
+        zh-Hant: SOCKS5 埠
+      required: false
+      rule: paramPort
+      type: number
+    - default: 20171
+      edit: true
+      envKey: PANEL_APP_PORT_HTTP_PROXY
+      labelEn: HTTP Proxy Port
+      labelZh: HTTP 代理端口
+      label:
+        en: HTTP Proxy Port
+        ja: HTTPプロキシポート
+        ms: Port Proksi HTTP
+        pt-br: Porta do Proxy HTTP
+        ru: Порт HTTP-прокси
+        ko: HTTP 프록시 포트
+        zh: HTTP 代理端口
+        zh-Hant: HTTP 代理埠
+      required: false
+      rule: paramPort
+      type: number
+    - default: 20172
+      edit: true
+      envKey: PANEL_APP_PORT_SS
+      labelEn: Shadowsocks Port
+      labelZh: Shadowsocks 端口
+      label:
+        en: Shadowsocks Port
+        ja: Shadowsocksポート
+        ms: Port Shadowsocks
+        pt-br: Porta Shadowsocks
+        ru: Порт Shadowsocks
+        ko: Shadowsocks 포트
+        zh: Shadowsocks 端口
+        zh-Hant: Shadowsocks 埠
+      required: false
+      rule: paramPort
+      type: number
+    - default: "Asia/Shanghai"
+      edit: true
+      envKey: TIMEZONE
+      labelEn: Timezone
+      labelZh: 时区
+      required: false
+      type: text
+    - default: "/usr/local/bin/xray"
+      edit: true
+      envKey: V2RAYA_V2RAY_BIN
+      labelEn: V2Ray Binary Path
+      labelZh: V2Ray 内核路径
+      label:
+        en: V2Ray Binary Path (xray or v2ray)
+        ja: V2Rayバイナリパス（xrayまたはv2ray）
+        ms: Laluan Binari V2Ray (xray atau v2ray)
+        pt-br: Caminho do Binário V2Ray (xray ou v2ray)
+        ru: Путь к бинарному файлу V2Ray (xray или v2ray)
+        ko: V2Ray 바이너리 경로 (xray 또는 v2ray)
+        zh: V2Ray 内核路径（xray 或 v2ray）
+        zh-Hant: V2Ray 核心路徑（xray 或 v2ray）
+      required: false
+      type: text
+    - default: "off"
+      edit: true
+      envKey: V2RAYA_NFTABLES_SUPPORT
+      labelEn: NFTables Support
+      labelZh: NFTables 支持
+      label:
+        en: "NFTables Support (on/off)"
+        ja: "NFTablesサポート（オン/オフ）"
+        ms: "Sokongan NFTables (on/off)"
+        pt-br: "Suporte NFTables (on/off)"
+        ru: "Поддержка NFTables (on/off)"
+        ko: "NFTables 지원 (on/off)"
+        zh: "NFTables 支持（on/off）"
+        zh-Hant: "NFTables 支援（on/off）"
+      required: false
+      type: text
+    - default: "legacy"
+      edit: true
+      envKey: IPTABLES_MODE
+      labelEn: IPTables Mode
+      labelZh: IPTables 模式
+      label:
+        en: "IPTables Mode (legacy/nftables)"
+        ja: "IPTablesモード（legacy/nftables）"
+        ms: "Mod IPTables (legacy/nftables)"
+        pt-br: "Modo IPTables (legacy/nftables)"
+        ru: "Режим IPTables (legacy/nftables)"
+        ko: "IPTables 모드 (legacy/nftables)"
+        zh: "IPTables 模式（legacy/nftables）"
+        zh-Hant: "IPTables 模式（legacy/nftables）"
+      required: false
+      type: text
