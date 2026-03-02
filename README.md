@@ -124,6 +124,14 @@ docker pull vikunja/vikunja:2.1.0
 docker pull openspug/spug:3.3.3
 docker pull baserow/baserow:2.1.3
 docker pull rmqtt/rmqtt:0.18.1
+
+# 导出镜像为 tar 文件
+docker save -o penpot-backend.tar ghcr.io/penpot/backend:2.13.3
+docker save -o penpot-frontend.tar ghcr.io/penpot/frontend:2.13.3
+docker save -o vikunja.tar vikunja/vikunja:2.1.0
+docker save -o spug.tar openspug/spug:3.3.3
+docker save -o baserow.tar baserow/baserow:2.1.3
+docker save -o rmqtt.tar rmqtt/rmqtt:0.18.1
 ```
 
 ### 步骤 2：上传到服务器
