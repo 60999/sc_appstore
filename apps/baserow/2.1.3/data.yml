@@ -104,7 +104,7 @@ additionalProperties:
       random: true
       required: true
       type: password
-    - default: ""
+    - default: "https://"
       edit: true
       envKey: PANEL_APP_URL
       labelEn: Application URL (Must be user-accessible address, not localhost/127.0.0.1)
@@ -114,7 +114,7 @@ additionalProperties:
       type: text
       values:
         - label: 请填写用户访问的完整URL，如 https://baserow.example.com
-          value: ""
+          value: "https://"
     - default: 2
       edit: true
       envKey: GUNICORN_WORKERS
