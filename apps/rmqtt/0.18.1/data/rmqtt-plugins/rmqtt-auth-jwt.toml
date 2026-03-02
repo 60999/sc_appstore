@@ -35,8 +35,14 @@
 ## - username: JWT 放在 MQTT 用户名字段
 from = "password"
 
-## 使用公钥/证书验证 RSA 签名
+## 加密方式
+## - public-key: RSA 公钥验证
+## - hmac: HMAC 验证
 encrypt = "public-key"
+
+## HMAC 密钥 (使用 HMAC 时需要)
+## 使用公钥验证时可以留空或设置任意值
+hmac_base64 = ""
 
 ## 证书文件路径 (Casdoor 的 JWT 证书)
 ## 支持格式: PEM 证书或公钥 (RSA/ECDSA)
@@ -79,10 +85,3 @@ validate_claims.exp = true
 ## 格式: validate_claims.sub = "${clientid}"
 ## 这要求设备连接时的ClientID必须与JWT的sub字段一致
 #validate_claims.sub = "${clientid}"
-
-##--------------------------------------------------------------------
-## 扩展验证 (可选)
-## 
-## 可添加自定义claims验证
-##--------------------------------------------------------------------
-#validate_claims.organization = "your-org"
