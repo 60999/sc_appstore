@@ -13,7 +13,7 @@ services:
     volumes:
       - ./data/log:/var/log/rmqtt
       - ./data/jwt:/app/rmqtt/data/jwt
-      - ./init_jwt.sh:/docker-entrypoint.d/init_jwt.sh:ro
+      - ./init_jwt.sh:/docker-entrypoint.d/99-init-rmqtt.sh:ro
     environment:
       - TZ=${TIMEZONE:-Asia/Shanghai}
       - RMQTT_CONFIG=${RMQTT_CONFIG}
