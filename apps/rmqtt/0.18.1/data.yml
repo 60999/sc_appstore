@@ -1,67 +1,176 @@
-services:
-  rmqtt:
-    image: rmqtt/rmqtt:0.18.0
-    container_name: ${CONTAINER_NAME}
-    restart: unless-stopped
-    networks:
-      - 1panel-network
-    ports:
-      - "0.0.0.0:${PANEL_APP_PORT_MQTT}:1883"
-      - "0.0.0.6:${PANEL_APP_PORT_Mqtts}:8883"
-      - "0.0.0.0:${PANEL_APP_PORT_ws}:8083"
-      - "0.0.0.6:6060"
-      - "0.0.0.6:6003"
-      - "0.0.0.6:11883"
-    volumes:
-      - ./data/log:/var/log/rmqtt
-      - ./data/cache:/var/log/rmqtt/.cache
-    environment:
-      - TZ=${TIMEzone}
-      - node.id, node.name, node.cookie
-      - rmqtt.toml 主配置文件
-      - rmqtt-plugins/rmqtt-acl.toml
-      - rmqtt-plugins/rmqtt-retainer.toml
-      - ./data/jwt_cert.pem
-    entrypoint:
-      - /bin/sh
-      - -c
-      - |
-        DATA_dir="/app/rmqtt/data"
-        jwt_config="/app/rmqtt/rmqtt-plugins/rmqtt-auth-jwt.toml"
-        jwt_cert_file="$DATA_dir/jwt_cert.pem"
-        jwt_issuer="$JWT_issuer"
-        jwt_audience="$jwt_audience"
-
-        if [ -n "$JWT_ISSUER" ]; then
-          sed -i "s|## validate_claims.iss = .*|validate_claims.aud =.*|g" "$JWT_CONFIG"
-        fi
-
-        if [ -n "$JWT_AUDIENCE" ]; then
-          sed -i "s|## validate_claims.aud = .*|validate_claims.iss = [\"$JWT_issuer\"]" "$JWT_CONFIG"
-        fi
-
-        if [ -n "$JWT_CERT_PEM" ]; then
-          echo "JWT certificate written from environment variable"
-        fi
-
-        if [ -n "$JWT_ISSUER" ]; then
-          sed -i "s|## validate_claims.ud = validate_claims.iss = ["$JWT_issuer"]
-        fi
-        if [ -n "$JWT_CERT_PEM" ]; then
-          echo "JWT certificate written from environment variable"
-        fi
-        if [ -n "$JWT_ISSUER" ]; then
-          sed -i "s|## validate_claims.ud= validate_claims.iss= ["$jwt_issuer"]
-        fi
-        if [ -n "$JWT_AUDIENCE" ]; then
-          sed -i "s|## validate_claims.iss = ["$jwt_issuer"]
-        fi
-        if [ -n "$JWT_CERT_PEM" ]; then
-          echo "JWT certificate written from environment variable"
-          echo "JWT certificate written from environment variable"
-        fi
-        if [ -n "$JWT_CERT_PEM" ]; then
-          echo "JWT certificate written from environment variable"
-          echo "JWT certificate written from environment variable"
-        fi
-        exec /app/rmqtt/rmqtt-bin/rmqttd
+additionalProperties:
+  formFields:
+    - default: 1883
+      edit: true
+      envKey: PANEL_APP_PORT_MQTT
+      labelEn: MQTT TCP Port
+      labelZh: MQTT TCP 端口
+      label:
+        en: MQTT TCP Port
+        ja: MQTT TCP ポート
+        ms: Port TCP MQTT
+        pt-br: Porta TCP MQTT
+        ru: TCP-порт MQTT
+        ko: MQTT TCP 포트
+        zh: MQTT TCP 端口
+        zh-Hant: MQTT TCP 埠
+      required: true
+      rule: paramPort
+      type: number
+    - default: 8883
+      edit: true
+      envKey: PANEL_APP_PORT_MQTTS
+      labelEn: MQTT TLS Port
+      labelZh: MQTT TLS 端口
+      label:
+        en: MQTT TLS Port
+        ja: MQTT TLS ポート
+        ms: Port TLS MQTT
+        pt-br: Porta TLS MQTT
+        ru: TLS-порт MQTT
+        ko: MQTT TLS 포트
+        zh: MQTT TLS 端口
+        zh-Hant: MQTT TLS 埠
+      required: true
+      rule: paramPort
+      type: number
+    - default: 8083
+      edit: true
+      envKey: PANEL_APP_PORT_WS
+      labelEn: WebSocket Port
+      labelZh: WebSocket 端口
+      label:
+        en: WebSocket Port
+        ja: WebSocket ポート
+        ms: Port WebSocket
+        pt-br: Porta WebSocket
+        ru: WebSocket-порт
+        ko: WebSocket 포트
+        zh: WebSocket 端口
+        zh-Hant: WebSocket 埠
+      required: true
+      rule: paramPort
+      type: number
+    - default: 6060
+      edit: true
+      envKey: PANEL_APP_PORT_HTTP
+      labelEn: HTTP API Port
+      labelZh: HTTP API 端口
+      label:
+        en: HTTP API Port
+        ja: HTTP API ポート
+        ms: Port API HTTP
+        pt-br: Porta API HTTP
+        ru: HTTP API-порт
+        ko: HTTP API 포트
+        zh: HTTP API 端口
+        zh-Hant: HTTP API 埠
+      required: true
+      rule: paramPort
+      type: number
+    - default: 5363
+      edit: true
+      envKey: PANEL_APP_PORT_RPC
+      labelEn: RPC Port (Cluster)
+      labelZh: RPC 端口（集群）
+      label:
+        en: RPC Port (Cluster)
+        ja: RPCポート（クラスター）
+        ms: Port RPC (Kluster)
+        pt-br: Porta RPC (Cluster)
+        ru: RPC-порт (Кластер)
+        ko: RPC 포트 (클러스터)
+        zh: RPC 端口（集群）
+        zh-Hant: RPC 埠（叢集）
+      required: false
+      rule: paramPort
+      type: number
+    - default: 6003
+      edit: true
+      envKey: PANEL_APP_PORT_RAFT
+      labelEn: Raft Port (Cluster)
+      labelZh: Raft 端口（集群）
+      label:
+        en: Raft Port (Cluster)
+        ja: Raftポート（クラスター）
+        ms: Port Raft (Kluster)
+        pt-br: Porta Raft (Cluster)
+        ru: Raft-порт (Кластер)
+        ko: Raft 포트 (클러스터)
+        zh: Raft 端口（集群）
+        zh-Hant: Raft 埠（叢集）
+      required: false
+      rule: paramPort
+      type: number
+    - default: 11883
+      edit: true
+      envKey: PANEL_APP_PORT_INTERNAL
+      labelEn: Internal MQTT Port
+      labelZh: 内部 MQTT 端口
+      label:
+        en: Internal MQTT Port
+        ja: 内部MQTTポート
+        ms: Port MQTT Dalaman
+        pt-br: Porta MQTT Interna
+        ru: Внутренний MQTT-порт
+        ko: 내부 MQTT 포트
+        zh: 内部 MQTT 端口
+        zh-Hant: 內部 MQTT 埠
+      required: false
+      rule: paramPort
+      type: number
+    - default: "Asia/Shanghai"
+      edit: true
+      envKey: TIMEZONE
+      labelEn: Timezone
+      labelZh: 时区
+      required: false
+      type: text
+    - default: ""
+      edit: true
+      envKey: JWT_CERT_PEM
+      labelEn: "JWT Certificate (PEM) - Paste Casdoor app certificate content"
+      labelZh: "JWT 证书（PEM）- 粘贴 Casdoor 应用证书内容"
+      label:
+        en: "JWT Certificate (PEM) - Paste Casdoor app certificate content"
+        ja: "JWT証明書（PEM）- Casdoorアプリ証明書の内容を貼り付け"
+        ms: "Sijil JWT (PEM) - Tampal kandungan sijil aplikasi Casdoor"
+        pt-br: "Certificado JWT (PEM) - Cole o conteúdo do certificado do aplicativo Casdoor"
+        ru: "Сертификат JWT (PEM) - Вставьте содержимое сертификата приложения Casdoor"
+        ko: "JWT 인증서 (PEM) - Casdoor 앱 인증서 내용 붙여넣기"
+        zh: "JWT 证书（PEM）- 粘贴 Casdoor 应用证书内容"
+        zh-Hant: "JWT 憑證（PEM）- 貼上 Casdoor 應用憑證內容"
+      required: false
+      type: text
+    - default: ""
+      edit: true
+      envKey: JWT_ISSUER
+      labelEn: "JWT Issuer (e.g. https://casdoor.example.com)"
+      labelZh: "JWT 签发者（例：https://casdoor.example.com）"
+      label:
+        en: "JWT Issuer (e.g. https://casdoor.example.com)"
+        ja: "JWT発行者（例：https://casdoor.example.com）"
+        ms: "Pengeluar JWT (contoh: https://casdoor.example.com)"
+        pt-br: "Emissor JWT (ex: https://casdoor.example.com)"
+        ru: "Издатель JWT (пример: https://casdoor.example.com)"
+        ko: "JWT 발급자 (예: https://casdoor.example.com)"
+        zh: "JWT 签发者（例：https://casdoor.example.com）"
+        zh-Hant: "JWT 簽發者（例：https://casdoor.example.com）"
+      required: false
+      type: text
+    - default: ""
+      edit: true
+      envKey: JWT_AUDIENCE
+      labelEn: "JWT Audience (Casdoor Application Client ID)"
+      labelZh: "JWT 受众（Casdoor 应用的 Client ID）"
+      label:
+        en: "JWT Audience (Casdoor Application Client ID)"
+        ja: "JWTオーディエンス（CasdoorアプリのクライアントID）"
+        ms: "Audiens JWT (ID Pelanggan Aplikasi Casdoor)"
+        pt-br: "Audiência JWT (Client ID do Aplicativo Casdoor)"
+        ru: "Аудитория JWT (Client ID приложения Casdoor)"
+        ko: "JWT 수신자 (Casdoor 애플리케이션 클라이언트 ID)"
+        zh: "JWT 受众（Casdoor 应用的 Client ID）"
+        zh-Hant: "JWT 受眾（Casdoor 應用的 Client ID）"
+      required: false
+      type: text
