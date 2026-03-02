@@ -16,7 +16,7 @@ services:
       - SPUG_ADMIN_USER=${SPUG_ADMIN_USER}
       - SPUG_ADMIN_PASSWORD=${SPUG_ADMIN_PASSWORD}
     ports:
-      - ${PANEL_APP_PORT_HTTP}:80
+      - "0.0.0.0:${PANEL_APP_PORT_HTTP}:80"
     volumes:
       - ./data/spug:/data
       - ./init_spug.sh:/docker-entrypoint.d/init_spug.sh:ro

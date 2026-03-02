@@ -17,7 +17,7 @@ services:
     volumes:
       - ./data/vikunja:/app/vikunja/files
     ports:
-      - ${PANEL_APP_PORT_HTTP}:3456
+      - "0.0.0.0:${PANEL_APP_PORT_HTTP}:3456
     labels:
       createdBy: "Apps"
 
