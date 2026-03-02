@@ -193,32 +193,32 @@ additionalProperties:
     - default: ""
       edit: true
       envKey: JWT_ISSUER
-      labelEn: JWT Issuer (Casdoor URL)
-      labelZh: JWT 签发者（Casdoor 地址）
+      labelEn: JWT Issuer (e.g. https://casdoor.example.com)
+      labelZh: JWT 签发者（例：https://casdoor.example.com）
       label:
-        en: JWT Issuer (Casdoor URL)
-        ja: JWT発行者（Casdoor URL）
-        ms: Pengeluar JWT (URL Casdoor)
-        pt-br: Emissor JWT (URL do Casdoor)
-        ru: Издатель JWT (URL Casdoor)
-        ko: JWT 발급자 (Casdoor URL)
-        zh: JWT 签发者（Casdoor 地址）
-        zh-Hant: JWT 簽發者（Casdoor 位址）
+        en: JWT Issuer (e.g. https://casdoor.example.com)
+        ja: JWT発行者（例：https://casdoor.example.com）
+        ms: Pengeluar JWT (contoh: https://casdoor.example.com)
+        pt-br: Emissor JWT (ex: https://casdoor.example.com)
+        ru: Издатель JWT (пример: https://casdoor.example.com)
+        ko: JWT 발급자 (예: https://casdoor.example.com)
+        zh: JWT 签发者（例：https://casdoor.example.com）
+        zh-Hant: JWT 簽發者（例：https://casdoor.example.com）
       required: false
       type: text
     - default: ""
       edit: true
       envKey: JWT_AUDIENCE
-      labelEn: JWT Audience (Casdoor Client ID)
-      labelZh: JWT 受众（Casdoor Client ID）
+      labelEn: JWT Audience (Casdoor Application Client ID)
+      labelZh: JWT 受众（Casdoor 应用的 Client ID）
       label:
-        en: JWT Audience (Casdoor Client ID)
-        ja: JWTオーディエンス（CasdoorクライアントID）
-        ms: Audiens JWT (ID Pelanggan Casdoor)
-        pt-br: Audiência JWT (Client ID do Casdoor)
-        ru: Аудитория JWT (Client ID Casdoor)
-        ko: JWT 수신자 (Casdoor 클라이언트 ID)
-        zh: JWT 受众（Casdoor Client ID）
-        zh-Hant: JWT 受眾（Casdoor Client ID）
+        en: JWT Audience (Casdoor Application Client ID)
+        ja: JWTオーディエンス（CasdoorアプリのクライアントID）
+        ms: Audiens JWT (ID Pelanggan Aplikasi Casdoor)
+        pt-br: Audiência JWT (Client ID do Aplicativo Casdoor)
+        ru: Аудитория JWT (Client ID приложения Casdoor)
+        ko: JWT 수신자 (Casdoor 애플리케이션 클라이언트 ID)
+        zh: JWT 受众（Casdoor 应用的 Client ID）
+        zh-Hant: JWT 受眾（Casdoor 應用的 Client ID）
       required: false
       type: text
