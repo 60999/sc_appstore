@@ -107,6 +107,16 @@ LOCAL_DIR="/opt/1panel/resource/apps/local"
 TEMP_ZIP="${LOCAL_DIR}/sc_appstore.zip"
 EXTRACT_DIR="${LOCAL_DIR}/${GITHUB_REPO}-main"
 
+# ============================================
+# 代理配置（可选）
+# 如需使用代理，取消注释并填写以下变量
+# ============================================
+# PROXY_TYPE="socks5"                    # 代理类型: socks5 或 http
+# PROXY_HOST="127.0.0.1"                 # 代理地址
+# PROXY_PORT="1080"                      # 代理端口
+# PROXY_USER=""                          # 代理用户名（如无需认证则留空）
+# PROXY_PASS=""                          # 代理密码（如无需认证则留空）
+
 # 本仓库包含的应用列表
 APPS=("baserow" "penpot" "rmqtt" "spug" "vikunja")
 
@@ -119,16 +129,40 @@ MIRROR_DOMAINS=(
 )
 
 # ============================================
+# 函数：构建代理参数
+# 返回：curl 代理参数字符串
+# ============================================
+build_proxy_args() {
+    local proxy_args=""
+    
+    if [ -n "$PROXY_TYPE" ] && [ -n "$PROXY_HOST" ] && [ -n "$PROXY_PORT" ]; then
+        local proxy_url=""
+        
+        if [ -n "$PROXY_USER" ] && [ -n "$PROXY_PASS" ]; then
+            proxy_url="${PROXY_TYPE}://${PROXY_USER}:${PROXY_PASS}@${PROXY_HOST}:${PROXY_PORT}"
+        else
+            proxy_url="${PROXY_TYPE}://${PROXY_HOST}:${PROXY_PORT}"
+        fi
+        
+        proxy_args="--proxy ${proxy_url}"
+        echo "使用代理: ${PROXY_TYPE}://${PROXY_HOST}:${PROXY_PORT}" >&2
+    fi
+    
+    echo "${proxy_args}"
+}
+
+# ============================================
 # 函数：测试 URL 是否可访问
 # 返回：响应时间（毫秒），失败返回99999
 # ============================================
 test_url_speed() {
     local test_url="$1"
+    local proxy_args="$2"
     local start_time end_time duration
     
     start_time=$(date +%s%3N 2>/dev/null || date +%s)000
     
-    if curl -fsSL --connect-timeout 5 --max-time 10 -o /dev/null "${test_url}" 2>/dev/null; then
+    if curl -fsSL --connect-timeout 5 --max-time 10 ${proxy_args} -o /dev/null "${test_url}" 2>/dev/null; then
         end_time=$(date +%s%3N 2>/dev/null || date +%s)000
         duration=$((end_time - start_time))
         echo "${duration}"
@@ -144,13 +178,14 @@ test_url_speed() {
 # ============================================
 select_best_source() {
     local zip_path="$1"
+    local proxy_args="$2"
     local github_url="https://github.com${zip_path}"
     
     echo "正在检测下载源..." >&2
     
     # 优先检测 GitHub 是否可以直接访问
     echo -n "  测试 GitHub 直连... " >&2
-    github_time=$(test_url_speed "${github_url}")
+    github_time=$(test_url_speed "${github_url}" "${proxy_args}")
     
     if [ "$github_time" -lt 99999 ]; then
         echo "${github_time}ms ✓" >&2
@@ -170,7 +205,7 @@ select_best_source() {
     for domain in "${MIRROR_DOMAINS[@]}"; do
         echo -n "  测试 ${domain}... " >&2
         local mirror_url="https://${domain}/https://github.com${zip_path}"
-        time_ms=$(test_url_speed "${mirror_url}")
+        time_ms=$(test_url_speed "${mirror_url}" "${proxy_args}")
         
         if [ "$time_ms" -lt 99999 ]; then
             echo "${time_ms}ms" >&2
@@ -202,9 +237,12 @@ echo "============================================"
 # 清理临时文件
 rm -rf "${TEMP_ZIP}" "${EXTRACT_DIR}"
 
+# 构建代理参数
+PROXY_ARGS=$(build_proxy_args)
+
 # 选择最佳下载源（优先检测 GitHub 直连）
 ZIP_PATH="/${GITHUB_USER}/${GITHUB_REPO}/archive/refs/heads/main.zip"
-DOWNLOAD_URL=$(select_best_source "${ZIP_PATH}")
+DOWNLOAD_URL=$(select_best_source "${ZIP_PATH}" "${PROXY_ARGS}")
 
 if [ -z "$DOWNLOAD_URL" ]; then
     echo "错误：无法找到可用的下载源"
@@ -215,7 +253,7 @@ echo "下载地址: ${DOWNLOAD_URL}"
 
 # 下载文件
 echo "正在下载..."
-if ! curl -fSL --connect-timeout 30 --max-time 180 --retry 3 \
+if ! curl -fSL --connect-timeout 30 --max-time 180 --retry 3 ${PROXY_ARGS} \
     -o "${TEMP_ZIP}" "${DOWNLOAD_URL}"; then
     echo "错误：下载失败"
     rm -rf "${TEMP_ZIP}"
