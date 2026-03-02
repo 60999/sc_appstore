@@ -177,48 +177,48 @@ additionalProperties:
     - default: ""
       edit: true
       envKey: JWT_CERT_PEM
-      labelEn: JWT Certificate (PEM) - Paste Casdoor app certificate
-      labelZh: JWT 证书（PEM）- 粘贴 Casdoor 应用证书
+      labelEn: "JWT Certificate (PEM) - Paste Casdoor app certificate"
+      labelZh: "JWT 证书（PEM）- 粘贴 Casdoor 应用证书"
       label:
-        en: JWT Certificate (PEM) - Paste Casdoor app certificate
-        ja: JWT証明書（PEM）- Casdoorアプリ証明書を貼り付け
-        ms: Sijil JWT (PEM) - Tampal sijil aplikasi Casdoor
-        pt-br: Certificado JWT (PEM) - Cole o certificado do aplicativo Casdoor
-        ru: Сертификат JWT (PEM) - Вставьте сертификат приложения Casdoor
-        ko: JWT 인증서 (PEM) - Casdoor 앱 인증서 붙여넣기
-        zh: JWT 证书（PEM）- 粘贴 Casdoor 应用证书
-        zh-Hant: JWT 憑證（PEM）- 貼上 Casdoor 應用憑證
+        en: "JWT Certificate (PEM) - Paste Casdoor app certificate"
+        ja: "JWT証明書（PEM）- Casdoorアプリ証明書を貼り付け"
+        ms: "Sijil JWT (PEM) - Tampal sijil aplikasi Casdoor"
+        pt-br: "Certificado JWT (PEM) - Cole o certificado do aplicativo Casdoor"
+        ru: "Сертификат JWT (PEM) - Вставьте сертификат приложения Casdoor"
+        ko: "JWT 인증서 (PEM) - Casdoor 앱 인증서 붙여넣기"
+        zh: "JWT 证书（PEM）- 粘贴 Casdoor 应用证书"
+        zh-Hant: "JWT 憑證（PEM）- 貼上 Casdoor 應用憑證"
       required: false
       type: text
     - default: ""
       edit: true
       envKey: JWT_ISSUER
-      labelEn: JWT Issuer (e.g. https://casdoor.example.com)
-      labelZh: JWT 签发者（例：https://casdoor.example.com）
+      labelEn: "JWT Issuer (e.g. https://casdoor.example.com)"
+      labelZh: "JWT 签发者（例：https://casdoor.example.com）"
       label:
-        en: JWT Issuer (e.g. https://casdoor.example.com)
-        ja: JWT発行者（例：https://casdoor.example.com）
-        ms: Pengeluar JWT (contoh: https://casdoor.example.com)
-        pt-br: Emissor JWT (ex: https://casdoor.example.com)
-        ru: Издатель JWT (пример: https://casdoor.example.com)
-        ko: JWT 발급자 (예: https://casdoor.example.com)
-        zh: JWT 签发者（例：https://casdoor.example.com）
-        zh-Hant: JWT 簽發者（例：https://casdoor.example.com）
+        en: "JWT Issuer (e.g. https://casdoor.example.com)"
+        ja: "JWT発行者（例：https://casdoor.example.com）"
+        ms: "Pengeluar JWT (contoh: https://casdoor.example.com)"
+        pt-br: "Emissor JWT (ex: https://casdoor.example.com)"
+        ru: "Издатель JWT (пример: https://casdoor.example.com)"
+        ko: "JWT 발급자 (예: https://casdoor.example.com)"
+        zh: "JWT 签发者（例：https://casdoor.example.com）"
+        zh-Hant: "JWT 簽發者（例：https://casdoor.example.com）"
       required: false
       type: text
     - default: ""
       edit: true
       envKey: JWT_AUDIENCE
-      labelEn: JWT Audience (Casdoor Application Client ID)
-      labelZh: JWT 受众（Casdoor 应用的 Client ID）
+      labelEn: "JWT Audience (Casdoor Application Client ID)"
+      labelZh: "JWT 受众（Casdoor 应用的 Client ID）"
       label:
-        en: JWT Audience (Casdoor Application Client ID)
-        ja: JWTオーディエンス（CasdoorアプリのクライアントID）
-        ms: Audiens JWT (ID Pelanggan Aplikasi Casdoor)
-        pt-br: Audiência JWT (Client ID do Aplicativo Casdoor)
-        ru: Аудитория JWT (Client ID приложения Casdoor)
-        ko: JWT 수신자 (Casdoor 애플리케이션 클라이언트 ID)
-        zh: JWT 受众（Casdoor 应用的 Client ID）
-        zh-Hant: JWT 受眾（Casdoor 應用的 Client ID）
+        en: "JWT Audience (Casdoor Application Client ID)"
+        ja: "JWTオーディエンス（CasdoorアプリのクライアントID）"
+        ms: "Audiens JWT (ID Pelanggan Aplikasi Casdoor)"
+        pt-br: "Audiência JWT (Client ID do Aplicativo Casdoor)"
+        ru: "Аудитория JWT (Client ID приложения Casdoor)"
+        ko: "JWT 수신자 (Casdoor 애플리케이션 클라이언트 ID)"
+        zh: "JWT 受众（Casdoor 应用的 Client ID）"
+        zh-Hant: "JWT 受眾（Casdoor 應用的 Client ID）"
       required: false
       type: text
