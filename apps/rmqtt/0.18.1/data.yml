@@ -34,6 +34,23 @@ additionalProperties:
       required: true
       rule: paramPort
       type: number
+    - default: 8083
+      edit: true
+      envKey: PANEL_APP_PORT_WS
+      labelEn: WebSocket Port
+      labelZh: WebSocket 端口
+      label:
+        en: WebSocket Port
+        ja: WebSocket ポート
+        ms: Port WebSocket
+        pt-br: Porta WebSocket
+        ru: WebSocket-порт
+        ko: WebSocket 포트
+        zh: WebSocket 端口
+        zh-Hant: WebSocket 埠
+      required: true
+      rule: paramPort
+      type: number
     - default: 6060
       edit: true
       envKey: PANEL_APP_PORT_HTTP
@@ -51,21 +68,55 @@ additionalProperties:
       required: true
       rule: paramPort
       type: number
-    - default: 8083
+    - default: 5363
       edit: true
-      envKey: PANEL_APP_PORT_WS
-      labelEn: WebSocket Port
-      labelZh: WebSocket 端口
+      envKey: PANEL_APP_PORT_RPC
+      labelEn: RPC Port (Cluster)
+      labelZh: RPC 端口（集群）
       label:
-        en: WebSocket Port
-        ja: WebSocket ポート
-        ms: Port WebSocket
-        pt-br: Porta WebSocket
-        ru: WebSocket-порт
-        ko: WebSocket 포트
-        zh: WebSocket 端口
-        zh-Hant: WebSocket 埠
-      required: true
+        en: RPC Port (Cluster)
+        ja: RPCポート（クラスター）
+        ms: Port RPC (Kluster)
+        pt-br: Porta RPC (Cluster)
+        ru: RPC-порт (Кластер)
+        ko: RPC 포트 (클러스터)
+        zh: RPC 端口（集群）
+        zh-Hant: RPC 埠（叢集）
+      required: false
+      rule: paramPort
+      type: number
+    - default: 6003
+      edit: true
+      envKey: PANEL_APP_PORT_RAFT
+      labelEn: Raft Port (Cluster)
+      labelZh: Raft 端口（集群）
+      label:
+        en: Raft Port (Cluster)
+        ja: Raftポート（クラスター）
+        ms: Port Raft (Kluster)
+        pt-br: Porta Raft (Cluster)
+        ru: Raft-порт (Кластер)
+        ko: Raft 포트 (클러스터)
+        zh: Raft 端口（集群）
+        zh-Hant: Raft 埠（叢集）
+      required: false
+      rule: paramPort
+      type: number
+    - default: 11883
+      edit: true
+      envKey: PANEL_APP_PORT_INTERNAL
+      labelEn: Internal MQTT Port
+      labelZh: 内部 MQTT 端口
+      label:
+        en: Internal MQTT Port
+        ja: 内部MQTTポート
+        ms: Port MQTT Dalaman
+        pt-br: Porta MQTT Interna
+        ru: Внутренний MQTT-порт
+        ko: 내부 MQTT 포트
+        zh: 内部 MQTT 端口
+        zh-Hant: 內部 MQTT 埠
+      required: false
       rule: paramPort
       type: number
     - default: "Asia/Shanghai"

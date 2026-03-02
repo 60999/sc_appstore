@@ -8,18 +8,52 @@ services:
     ports:
       - "0.0.0.0:${PANEL_APP_PORT_MQTT}:1883"
       - "0.0.0.0:${PANEL_APP_PORT_MQTTS}:8883"
-      - "0.0.0.0:${PANEL_APP_PORT_HTTP}:6060"
       - "0.0.0.0:${PANEL_APP_PORT_WS}:8083"
+      - "0.0.0.0:${PANEL_APP_PORT_HTTP}:6060"
+      - "0.0.0.0:${PANEL_APP_PORT_RPC}:5363"
+      - "0.0.0.0:${PANEL_APP_PORT_RAFT}:6003"
+      - "0.0.0.0:${PANEL_APP_PORT_INTERNAL}:11883"
     volumes:
       - ./data/log:/var/log/rmqtt
       - ./data/jwt:/app/rmqtt/data/jwt
-      - ./init_jwt.sh:/docker-entrypoint.d/99-init-rmqtt.sh:ro
     environment:
       - TZ=${TIMEZONE:-Asia/Shanghai}
       - RMQTT_CONFIG=${RMQTT_CONFIG}
       - RMQTT_ACL_CONFIG=${RMQTT_ACL_CONFIG}
       - RMQTT_JWT_CONFIG=${RMQTT_JWT_CONFIG}
       - JWT_PUBLIC_KEY_PEM=${JWT_PUBLIC_KEY_PEM}
+    command:
+      - sh
+      - -c
+      - |
+        CONFIG_DIR="/app/rmqtt/rmqtt-plugins"
+        DATA_DIR="/app/rmqtt/data"
+        JWT_DIR="$DATA_DIR/jwt"
+        CONFIG_FILE="/app/rmqtt/rmqtt.toml"
+
+        mkdir -p "$CONFIG_DIR"
+        mkdir -p "$JWT_DIR"
+
+        if [ -n "$JWT_PUBLIC_KEY_PEM" ]; then
+          echo "$JWT_PUBLIC_KEY_PEM" > "$JWT_DIR/jwt_cert.pem"
+          chmod 644 "$JWT_DIR/jwt_cert.pem"
+        fi
+
+        if [ -n "$RMQTT_ACL_CONFIG" ]; then
+          echo "$RMQTT_ACL_CONFIG" > "$CONFIG_DIR/rmqtt-acl.toml"
+        fi
+
+        if [ -n "$RMQTT_JWT_CONFIG" ]; then
+          echo "$RMQTT_JWT_CONFIG" > "$CONFIG_DIR/rmqtt-auth-jwt.toml"
+        fi
+
+        if [ -n "$RMQTT_CONFIG" ]; then
+          echo "$RMQTT_CONFIG" > "$CONFIG_FILE"
+        fi
+
+        sed -i 's/allow_anonymous = true/allow_anonymous = false/g' "$CONFIG_FILE"
+
+        exec /app/rmqtt/rmqtt-bin/rmqttd "$$@"
     labels:
       createdBy: "Apps"
 

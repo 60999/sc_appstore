@@ -12,8 +12,11 @@ RMQTT 是一款开源、高性能、高可用的 MQTT 消息代理。
 |------|------|------|
 | 1883 | MQTT TCP | 标准 MQTT 协议端口 |
 | 8883 | MQTT TLS | MQTT over TLS/SSL |
-| 6060 | HTTP API | 管理接口 |
 | 8083 | WebSocket | MQTT over WebSocket |
+| 6060 | HTTP API | 管理接口 |
+| 5363 | RPC | 集群 RPC 通信端口 |
+| 6003 | Raft | 集群 Raft 共识端口 |
+| 11883 | Internal MQTT | 内部 MQTT 通信端口 |
 
 ## 端口绑定配置
 
@@ -48,23 +51,6 @@ RMQTT 支持 JWT 认证。配置步骤：
 3. **验证配置**：确保以下配置正确
 
 **注意**：只需填写 Casdoor 中应用对应的证书，即可完成 JWT 认证配置。
-
-```toml
-# 主配置文件中
-plugins.default_startups = [
-    "rmqtt-retainer",
-    "rmqtt-http-api",
-    "rmqtt-auth-jwt",
-    "rmqtt-acl"
-]
-
-# JWT 认证配置
-from = "password"
-encrypt = "public-key"
-public_key = "/app/rmqtt/data/jwt/jwt_cert.pem"
-disconnect_if_expiry = true
-validate_claims.exp = true
-```
 
 ### 测试连接
 
