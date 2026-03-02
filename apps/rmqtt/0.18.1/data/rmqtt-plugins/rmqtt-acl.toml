@@ -29,6 +29,9 @@ disconnect_if_pub_rejected = true
 
 ##--------------------------------------------------------------------
 ## ACL 规则 (按顺序匹配，匹配成功即停止)
+## 
+## 权限类型: allow | deny
+## 操作类型: publish | subscribe | pubsub
 ##--------------------------------------------------------------------
 rules = [
     ##----------------------------------------------------------------
@@ -49,29 +52,29 @@ rules = [
     ##    %c = {org}/{device_id} (组织名/设备ID)
     ##    主题: device/{org}/{device_id}/status
     ##----------------------------------------------------------------
-    ["allow", "all", "pub", ["device/%c/status", "device/%c/event", "device/%c/telemetry", "device/%c/sensor"]],
+    ["allow", "all", "publish", ["device/%c/status", "device/%c/event", "device/%c/telemetry", "device/%c/sensor"]],
 
     ##----------------------------------------------------------------
     ## 4. 设备订阅权限
     ##----------------------------------------------------------------
-    ["allow", "all", "sub", ["device/%c/command", "device/%c/config", "device/%c/ota"]],
+    ["allow", "all", "subscribe", ["device/%c/command", "device/%c/config", "device/%c/ota"]],
 
     ##----------------------------------------------------------------
     ## 5. 用户权限 - 用户可以访问自己关联的设备
     ##----------------------------------------------------------------
-    ["allow", "all", "pub", ["user/%u/device/+/command"]],
-    ["allow", "all", "sub", ["user/%u/device/#"]],
+    ["allow", "all", "publish", ["user/%u/device/+/command"]],
+    ["allow", "all", "subscribe", ["user/%u/device/#"]],
 
     ##----------------------------------------------------------------
     ## 6. 共享订阅权限 - 用于负载均衡
     ##----------------------------------------------------------------
-    ["allow", { user = "backend-service" }, "sub", ["$share/backend/device/#"]],
-    ["allow", { user = "api-server" }, "sub", ["$share/backend/device/#"]],
+    ["allow", { user = "backend-service" }, "subscribe", ["$share/backend/device/#"]],
+    ["allow", { user = "api-server" }, "subscribe", ["$share/backend/device/#"]],
 
     ##----------------------------------------------------------------
     ## 7. 系统主题 - 仅管理员可访问
     ##----------------------------------------------------------------
-    ["deny", "all", "sub", ["$SYS/#"]],
+    ["deny", "all", "subscribe", ["$SYS/#"]],
     ["allow", { user = "admin" }, "pubsub", ["$SYS/#"]],
     ["allow", { user = "mqtt-admin" }, "pubsub", ["$SYS/#"]],
 
