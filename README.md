@@ -119,12 +119,11 @@ MIRROR_DOMAINS=(
 )
 
 # ============================================
-# 函数：测试镜像响应速度
+# 函数：测试 URL 是否可访问
 # 返回：响应时间（毫秒），失败返回99999
 # ============================================
-test_mirror_speed() {
-    local domain="$1"
-    local test_url="https://${domain}/https://github.com"
+test_url_speed() {
+    local test_url="$1"
     local start_time end_time duration
     
     start_time=$(date +%s%3N 2>/dev/null || date +%s)000
@@ -139,18 +138,39 @@ test_mirror_speed() {
 }
 
 # ============================================
-# 函数：选择最快的镜像
-# 输出：日志输出到stderr，返回域名到stdout
+# 函数：选择最佳下载源
+# 优先检测 GitHub 直连，再检测镜像加速
+# 输出：日志输出到stderr，返回URL到stdout
 # ============================================
-select_fastest_mirror() {
+select_best_source() {
+    local zip_path="$1"
+    local github_url="https://github.com${zip_path}"
+    
+    echo "正在检测下载源..." >&2
+    
+    # 优先检测 GitHub 是否可以直接访问
+    echo -n "  测试 GitHub 直连... " >&2
+    github_time=$(test_url_speed "${github_url}")
+    
+    if [ "$github_time" -lt 99999 ]; then
+        echo "${github_time}ms ✓" >&2
+        echo "使用 GitHub 直连: ${github_time}ms" >&2
+        echo "${github_url}"
+        return 0
+    else
+        echo "不可用" >&2
+    fi
+    
+    # GitHub 不可用，检测镜像加速
+    echo "GitHub 直连不可用，检测镜像加速..." >&2
+    
     local fastest_domain=""
     local fastest_time=99999
     
-    echo "正在检测镜像速度..." >&2
-    
     for domain in "${MIRROR_DOMAINS[@]}"; do
         echo -n "  测试 ${domain}... " >&2
-        time_ms=$(test_mirror_speed "${domain}")
+        local mirror_url="https://${domain}/https://github.com${zip_path}"
+        time_ms=$(test_url_speed "${mirror_url}")
         
         if [ "$time_ms" -lt 99999 ]; then
             echo "${time_ms}ms" >&2
@@ -164,12 +184,12 @@ select_fastest_mirror() {
     done
     
     if [ -z "$fastest_domain" ]; then
-        echo "警告：所有镜像都不可用，尝试直接下载" >&2
+        echo "错误：所有下载源都不可用" >&2
+        echo ""
     else
         echo "选择最快镜像: ${fastest_domain} (${fastest_time}ms)" >&2
+        echo "https://${fastest_domain}/https://github.com${zip_path}"
     fi
-    
-    echo "${fastest_domain}"
 }
 
 # ============================================
@@ -182,15 +202,13 @@ echo "============================================"
 # 清理临时文件
 rm -rf "${TEMP_ZIP}" "${EXTRACT_DIR}"
 
-# 选择最快的镜像
-FASTEST_MIRROR=$(select_fastest_mirror)
-
-# 构建下载URL
+# 选择最佳下载源（优先检测 GitHub 直连）
 ZIP_PATH="/${GITHUB_USER}/${GITHUB_REPO}/archive/refs/heads/main.zip"
-if [ -n "$FASTEST_MIRROR" ]; then
-    DOWNLOAD_URL="https://${FASTEST_MIRROR}/https://github.com${ZIP_PATH}"
-else
-    DOWNLOAD_URL="https://github.com${ZIP_PATH}"
+DOWNLOAD_URL=$(select_best_source "${ZIP_PATH}")
+
+if [ -z "$DOWNLOAD_URL" ]; then
+    echo "错误：无法找到可用的下载源"
+    exit 1
 fi
 
 echo "下载地址: ${DOWNLOAD_URL}"
