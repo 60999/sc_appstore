@@ -1,0 +1,27 @@
+name: v2raya
+tags:
+  - proxy
+  - vpn
+  - network
+title: V2RayA
+description: A V2Ray Linux client with web GUI, supporting transparent proxy
+descriptionEn: A V2Ray Linux client with web GUI, supporting transparent proxy
+descriptionJa: Web GUIを備えたV2Ray Linuxクライアント、透過プロキシ対応
+descriptionMs: Klien Linux V2Ray dengan GUI web, menyokong proksi telus
+descriptionPtBr: Um cliente Linux V2Ray com GUI web, suportando proxy transparente
+descriptionRu: Клиент V2Ray для Linux с веб-интерфейсом, поддерживает прозрачный прокси
+descriptionKo: 웹 GUI를 갖춘 V2Ray Linux 클라이언트, 투명 프록시 지원
+descriptionZh: 一个支持透明代理的 V2Ray Linux 客户端，带 Web GUI
+descriptionZhHant: 一個支援透明代理的 V2Ray Linux 客戶端，帶 Web GUI
+logoUrl: https://v2raya.org/favicon.ico
+websiteUrl: https://v2raya.org/
+githubUrl: https://github.com/v2rayA/v2rayA
+author: v2rayA
+type: tool
+crossVersionUpdate: true
+limit: 0
+recommend: 0
+website: https://v2raya.org/
+document: https://v2raya.org/docs/
+sources:
+  - docker: mzz2017/v2raya:2.2.5.1

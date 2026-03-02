@@ -1,0 +1,22 @@
+services:
+  example:
+    image: example/app:1.0.0
+    container_name: ${CONTAINER_NAME}
+    restart: unless-stopped
+    networks:
+      - 1panel-network
+    ports:
+      - "0.0.0.0:${PANEL_APP_PORT_HTTP}:8080"
+    volumes:
+      - ./data/config:/app/config
+      - ./data/logs:/app/logs
+    environment:
+      - TZ=${TIMEZONE:-Asia/Shanghai}
+      - APP_CONFIG_OPTION_1=${APP_CONFIG_OPTION_1}
+      - APP_SECRET=${APP_SECRET}
+    labels:
+      createdBy: "Apps"
+
+networks:
+  1panel-network:
+    external: true

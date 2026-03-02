@@ -1,0 +1,26 @@
+name: example
+tags:
+  - demo
+  - template
+title: Example App
+description: 应用模板示例，用于创建新应用时参考
+descriptionEn: Example app template for reference when creating new apps
+descriptionJa: 新しいアプリを作成する際の参考用アプリテンプレート
+descriptionMs: Contoh templat aplikasi untuk rujukan semasa membuat aplikasi baharu
+descriptionPtBr: Modelo de aplicativo de exemplo para referência ao criar novos aplicativos
+descriptionRu: Пример шаблона приложения для справки при создании новых приложений
+descriptionKo: 새 앱 생성 시 참조용 예제 앱 템플릿
+descriptionZh: 应用模板示例，用于创建新应用时参考
+descriptionZhHant: 應用模板範例，用於建立新應用時參考
+logoUrl: https://example.com/logo.png
+websiteUrl: https://example.com/
+githubUrl: https://github.com/example/app
+author: example
+type: tool
+crossVersionUpdate: true
+limit: 0
+recommend: 0
+website: https://example.com/
+document: https://example.com/docs/
+sources:
+  - docker: example/app:1.0.0

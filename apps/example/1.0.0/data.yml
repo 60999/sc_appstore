@@ -1,0 +1,58 @@
+additionalProperties:
+  formFields:
+    - default: 8080
+      edit: true
+      envKey: PANEL_APP_PORT_HTTP
+      labelEn: HTTP Port
+      labelZh: HTTP 端口
+      label:
+        en: HTTP Port
+        ja: HTTPポート
+        ms: Port HTTP
+        pt-br: Porta HTTP
+        ru: HTTP-порт
+        ko: HTTP 포트
+        zh: HTTP 端口
+        zh-Hant: HTTP 埠
+      required: true
+      rule: paramPort
+      type: number
+    - default: "Asia/Shanghai"
+      edit: true
+      envKey: TIMEZONE
+      labelEn: Timezone
+      labelZh: 时区
+      required: false
+      type: text
+    - default: ""
+      edit: true
+      envKey: APP_CONFIG_OPTION_1
+      labelEn: Config Option 1
+      labelZh: 配置选项 1
+      label:
+        en: Config Option 1
+        ja: 設定オプション1
+        ms: Pilihan Konfigurasi 1
+        pt-br: Opção de Configuração 1
+        ru: Параметр конфигурации 1
+        ko: 구성 옵션 1
+        zh: 配置选项 1
+        zh-Hant: 配置選項 1
+      required: false
+      type: text
+    - default: ""
+      envKey: APP_SECRET
+      labelEn: App Secret
+      labelZh: 应用密钥
+      label:
+        en: App Secret
+        ja: アプリシークレット
+        ms: Rahsia Aplikasi
+        pt-br: Segredo do Aplicativo
+        ru: Секрет приложения
+        ko: 앱 비밀키
+        zh: 应用密钥
+        zh-Hant: 應用密鑰
+      random: true
+      required: true
+      type: password
