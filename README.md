@@ -84,6 +84,74 @@ rm -rf /opt/1panel/resource/apps/local/sc_appstore-main
 rm -rf /opt/1panel/resource/apps/local/main.zip
 ```
 
+## 离线安装（镜像文件加载）
+
+如果服务器无法访问 Docker 镜像仓库，可以提前下载镜像 tar 文件，然后在服务器上加载。
+
+### 步骤 1：下载镜像文件
+
+在有网络的机器上下载镜像并导出：
+
+```bash
+# 拉取镜像
+docker pull docker.1ms.run/ghcr.io/penpot/backend:2.13.3
+docker pull docker.1ms.run/ghcr.io/penpot/frontend:2.13.3
+docker pull docker.1ms.run/vikunja/vikunja:2.1.0
+docker pull docker.1ms.run/openspug/spug:3.3.3
+docker pull baserow/baserow:2.1.3
+docker pull rmqtt/rmqtt:0.18.1
+
+# 导出镜像为 tar 文件
+docker save -o penpot-backend.tar docker.1ms.run/ghcr.io/penpot/backend:2.13.3
+docker save -o penpot-frontend.tar docker.1ms.run/ghcr.io/penpot/frontend:2.13.3
+docker save -o vikunja.tar docker.1ms.run/vikunja/vikunja:2.1.0
+docker save -o spug.tar docker.1ms.run/openspug/spug:3.3.3
+docker save -o baserow.tar baserow/baserow:2.1.3
+docker save -o rmqtt.tar rmqtt/rmqtt:0.18.1
+```
+
+### 步骤 2：上传到服务器
+
+将 tar 文件上传到服务器，例如 `/opt/images/` 目录。
+
+### 步骤 3：加载镜像
+
+```bash
+# 加载所有镜像
+docker load -i /opt/images/penpot-backend.tar
+docker load -i /opt/images/penpot-frontend.tar
+docker load -i /opt/images/vikunja.tar
+docker load -i /opt/images/spug.tar
+docker load -i /opt/images/baserow.tar
+docker load -i /opt/images/rmqtt.tar
+
+# 验证镜像已加载
+docker images
+```
+
+### 步骤 4：在 1Panel 中安装应用
+
+镜像加载完成后，即可在 1Panel 中正常安装应用，Docker 会直接使用本地镜像，无需从网络拉取。
+
+### 一键加载脚本
+
+```bash
+#!/bin/bash
+# 将此脚本放在镜像 tar 文件所在目录执行
+
+IMAGE_DIR="/opt/images"
+
+for tar_file in "$IMAGE_DIR"/*.tar; do
+    if [ -f "$tar_file" ]; then
+        echo "加载镜像: $tar_file"
+        docker load -i "$tar_file"
+    fi
+done
+
+echo "所有镜像加载完成"
+docker images
+```
+
 ## 自动更新脚本
 
 可在 1Panel 计划任务中添加以下脚本，实现自动更新本仓库应用。
