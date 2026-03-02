@@ -40,9 +40,10 @@ from = "password"
 ## - hmac: HMAC 验证
 encrypt = "public-key"
 
-## HMAC 密钥 (使用 HMAC 时需要)
-## 使用公钥验证时可以留空或设置任意值
-hmac_base64 = ""
+## 是否使用 HMAC Base64 编码
+## - true: 使用 HMAC 验证时需要
+## - false: 使用公钥验证时设置为 false
+hmac_base64 = false
 
 ## 证书文件路径 (Casdoor 的 JWT 证书)
 ## 支持格式: PEM 证书或公钥 (RSA/ECDSA)
