@@ -162,6 +162,8 @@ docker images
 
 | 应用 | 配置说明 |
 |------|----------|
+| Baserow | [apps/baserow/2.1.3/README.md](apps/baserow/2.1.3/README.md) - 访问地址配置 |
+| Penpot | [apps/penpot/2.13.3/README.md](apps/penpot/2.13.3/README.md) - 镜像获取说明 |
 | Vikunja | [apps/vikunja/2.1.0/README.md](apps/vikunja/2.1.0/README.md) - 权限问题解决 |
 | Spug | [apps/spug/3.3.3/README.md](apps/spug/3.3.3/README.md) - 管理员初始化 |
 | RMQTT | [apps/rmqtt/0.18.1/README.md](apps/rmqtt/0.18.1/README.md) - 端口绑定配置 |
