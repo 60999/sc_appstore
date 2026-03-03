@@ -1,32 +1,25 @@
 ##--------------------------------------------------------------------
 ## rmqtt-auth-jwt - Casdoor JWT 认证 (RSA)
 ## 
-## 安装后配置:
-## 1. 将 Casdoor 应用的证书内容粘贴到 jwt_cert.pem 文件
-## 2. 取消注释并修改下面的 validate_claims.iss 和 validate_claims.aud
-## 3. 重启 RMQTT 容器
+## 连接参数:
+## - username: {org}/{device_id} (组织名/设备ID)
+## - clientid: {org}/{device_id} (与username一致)
+## - password: JWT Token
 ##
-## 多组织支持:
-## ================================
-## - 设备连接时使用格式化的ClientID: {org}/{device_id}
-## - ACL规则中使用 %c 占位符匹配ClientID
-## - 不同组织的设备有不同的clientid前缀，自动隔离
-## 
 ## JWT Claims 示例 (Casdoor):
 ## {
-##   "sub": "org/device001",
-##   "name": "Device 001",
-##   "organization": "org",
-##   "application": "client_id",
+##   "sub": "sxsc/cardputer_01",     <- 需要在 Casdoor 中配置为 {org}/{device_id}
+##   "name": "cardputer_01",
+##   "owner": "sxsc",
 ##   "exp": 1234567890,
-##   "iss": "https://your-casdoor-domain",
+##   "iss": "https://casdoor.example.com",
 ##   "aud": "client_id"
 ## }
 ##
-## 连接参数:
-## - username: JWT 的 name 字段值
-## - clientid: JWT 的 sub 字段值
-## - password: JWT Token
+## 重要: Casdoor 配置
+## ================================
+## 需要在 Casdoor 中将设备的 JWT sub 字段配置为 {org}/{device_id} 格式
+## 这样 MQTT clientid 就能包含组织信息，实现多组织隔离
 ##
 ## 参考文档: https://github.com/rmqtt/rmqtt/blob/master/docs/en_US/auth-jwt.md
 ##--------------------------------------------------------------------
@@ -36,60 +29,48 @@
 ##--------------------------------------------------------------------
 
 ## JWT 存放位置
-## - password: JWT 放在 MQTT 密码字段 (推荐)
-## - username: JWT 放在 MQTT 用户名字段
 from = "password"
 
 ## 加密方式
-## - public-key: RSA 公钥验证
-## - hmac: HMAC 验证
 encrypt = "public-key"
 
-## 是否使用 HMAC Base64 编码
-## - true: 使用 HMAC 验证时需要
-## - false: 使用公钥验证时设置为 false
+## HMAC 配置 (使用公钥验证时为 false)
 hmac_base64 = false
 
-## 证书文件路径 (Casdoor 的 JWT 证书)
-## 支持格式: PEM 证书或公钥 (RSA/ECDSA)
+## 证书文件路径
 public_key = "/app/rmqtt/data/jwt_cert.pem"
 
 ##--------------------------------------------------------------------
 ## 连接控制配置
 ##--------------------------------------------------------------------
 
-## 发布被拒绝后是否断开连接
 disconnect_if_pub_rejected = true
-
-## JWT 过期后断开连接
-## 安全建议: 启用此选项防止过期令牌持续连接
 disconnect_if_expiry = true
 
 ##--------------------------------------------------------------------
 ## JWT Claims 验证配置
 ## 
-## 支持的占位符:
-## - ${username}: MQTT 连接用户名
-## - ${clientid}: MQTT 连接客户端ID
-## - ${ipaddr}: 客户端IP地址
-## - ${protocol}: MQTT协议版本 (3=3.1, 4=3.1.1, 5=5.0)
+## 验证规则:
+## - MQTT username 必须与 JWT 的 name 字段匹配
+## - MQTT clientid 必须与 JWT 的 sub 字段匹配
+## - 建议: 在 Casdoor 中将 sub 配置为 {org}/{device_id} 格式
+## - 这样 clientid 就包含组织信息，ACL 可以实现多组织隔离
 ##--------------------------------------------------------------------
 
-## 验证过期时间 (必须启用)
+## 验证过期时间
 validate_claims.exp = true
 
-## 验证用户名 (必须启用)
-## 确保 MQTT 用户名与 JWT 的 name 字段匹配
+## 验证用户名
+## MQTT username 必须与 JWT 的 name 字段匹配
 validate_claims.name = "${username}"
 
-## 验证签发者 (强烈建议启用)
-## 取消注释并修改为你的 Casdoor 服务地址
+## 验证 clientid
+## MQTT clientid 必须与 JWT 的 sub 字段匹配
+## 如果 sub = {org}/{device_id}，则 clientid 也为此格式
+validate_claims.sub = "${clientid}"
+
+## 验证签发者 (可选)
 ## validate_claims.iss = ["https://your-casdoor-domain"]
 
-## 验证受众 (强烈建议启用)
-## 取消注释并修改为你的 Casdoor 应用 client_id
+## 验证受众 (可选)
 ## validate_claims.aud = ["your-client-id"]
-
-## 验证 subject (可选)
-## 可用于确保 JWT 的 sub 字段与 ClientID 匹配
-## validate_claims.sub = "${clientid}"
