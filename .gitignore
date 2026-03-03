@@ -23,3 +23,6 @@ Thumbs.db
 
 # 测试目录
 test/
+
+# 独立项目仓库
+mqtt-device-auth/
