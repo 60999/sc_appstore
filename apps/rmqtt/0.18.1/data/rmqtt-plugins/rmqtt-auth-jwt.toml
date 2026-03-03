@@ -2,24 +2,28 @@
 ## rmqtt-auth-jwt - Casdoor JWT 认证 (RSA)
 ## 
 ## 连接参数:
-## - username: {org}/{device_id} (组织名/设备ID)
-## - clientid: {org}/{device_id} (与username一致)
+## - username: {mqtt_org}/{mqtt_device} (组织名/设备ID)
+## - clientid: {mqtt_org}/{mqtt_device} (与username一致)
 ## - password: JWT Token
 ##
-## JWT Claims 示例 (Casdoor):
+## JWT Payload 示例 (Casdoor):
 ## {
-##   "sub": "sxsc/cardputer_01",     <- 需要在 Casdoor 中配置为 {org}/{device_id}
-##   "name": "cardputer_01",
-##   "owner": "sxsc",
-##   "exp": 1234567890,
-##   "iss": "https://casdoor.example.com",
-##   "aud": "client_id"
+##   "sub": "006af2f4-63a6-4073-82c5-ed54729764e7",
+##   "mqtt_org": "sxsc",
+##   "mqtt_device": "cardputer_01",
+##   "exp": 1773104546,
+##   "iss": "https://logins.sxsc.ltd",
+##   "aud": ["ac47399a655f571edfbc"]
 ## }
 ##
-## 重要: Casdoor 配置
-## ================================
-## 需要在 Casdoor 中将设备的 JWT sub 字段配置为 {org}/{device_id} 格式
-## 这样 MQTT clientid 就能包含组织信息，实现多组织隔离
+## 连接时:
+## - username = {mqtt_org}/{mqtt_device} = sxsc/cardputer_01
+## - clientid = {mqtt_org}/{mqtt_device} = sxsc/cardputer_01
+## - password = JWT Token
+##
+## 主题格式:
+## - device/{mqtt_org}/{mqtt_device}/status
+## - device/{mqtt_org}/{mqtt_device}/command
 ##
 ## 参考文档: https://github.com/rmqtt/rmqtt/blob/master/docs/en_US/auth-jwt.md
 ##--------------------------------------------------------------------
@@ -51,26 +55,16 @@ disconnect_if_expiry = true
 ## JWT Claims 验证配置
 ## 
 ## 验证规则:
-## - MQTT username 必须与 JWT 的 name 字段匹配
-## - MQTT clientid 必须与 JWT 的 sub 字段匹配
-## - 建议: 在 Casdoor 中将 sub 配置为 {org}/{device_id} 格式
-## - 这样 clientid 就包含组织信息，ACL 可以实现多组织隔离
+## - MQTT username 必须为 {mqtt_org}/{mqtt_device} 格式
+## - MQTT clientid 必须为 {mqtt_org}/{mqtt_device} 格式
+## - mqtt_org 和 mqtt_device 来自 JWT 自定义字段
 ##--------------------------------------------------------------------
 
 ## 验证过期时间
 validate_claims.exp = true
 
-## 验证用户名
-## MQTT username 必须与 JWT 的 name 字段匹配
-validate_claims.name = "${username}"
-
-## 验证 clientid
-## MQTT clientid 必须与 JWT 的 sub 字段匹配
-## 如果 sub = {org}/{device_id}，则 clientid 也为此格式
-validate_claims.sub = "${clientid}"
-
 ## 验证签发者 (可选)
-## validate_claims.iss = ["https://your-casdoor-domain"]
+## validate_claims.iss = ["https://logins.sxsc.ltd"]
 
 ## 验证受众 (可选)
-## validate_claims.aud = ["your-client-id"]
+## validate_claims.aud = ["ac47399a655f571edfbc"]
