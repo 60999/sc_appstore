@@ -23,3 +23,6 @@ Thumbs.db
 
 # 测试目录
 test/
+
+# MQTT 设备认证系统
+mqtt-device-auth/
